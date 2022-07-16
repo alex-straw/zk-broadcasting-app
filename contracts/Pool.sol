@@ -2,7 +2,7 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "Verifier.sol";
+import "./Verifier.sol";
 
 contract IdentityFactory is Verifier {
 
