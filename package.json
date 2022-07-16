@@ -20,6 +20,7 @@
     "hardhat": "^2.10.1"
   },
   "dependencies": {
+    "ethers": "^5.6.9",
     "zokrates-js": "^1.1.1"
   }
 }
