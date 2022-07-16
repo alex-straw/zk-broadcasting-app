@@ -1,0 +1,25 @@
+{
+  "name": "zk-broadcasting-app",
+  "version": "1.0.0",
+  "description": "MK1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-straw/zk-broadcasting-app.git"
+  },
+  "author": "Alex Straw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alex-straw/zk-broadcasting-app/issues"
+  },
+  "homepage": "https://github.com/alex-straw/zk-broadcasting-app#readme",
+  "devDependencies": {
+    "hardhat": "^2.10.1"
+  },
+  "dependencies": {
+    "zokrates-js": "^1.1.1"
+  }
+}
