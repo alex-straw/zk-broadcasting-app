@@ -1,1 +1,7 @@
 node_modules
+
+zokrates/SetupPool/out
+zokrates/SetupPool/out.r1cs
+zokrates/SetupPool/abi.json
+zokrates/SetupPool/proving.key
+zokrates/SetupPool/verification.key
