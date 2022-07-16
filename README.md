@@ -20,13 +20,13 @@ There is a risk of front-running - and therefore future upgrades will use flashb
 
 ## Deployment - JavaScript
 
-Create 3 IDS:
+Create 3 IDs:
 
 1. email: a@bristol.ac.uk, preImage = [0, 0, 0 5]
 2. email: b@bristol.ac.uk, preImage = [0, 0, 0 6]
 3. email: c@bbristol.ac.uk, preImage = [0, 0, 0 7]
 
-Initially this will assume that IDS have been distributed (with more secure preImages) and that these are verified (by accessing the associated email).
+Initially this will assume that IDs have been distributed (with more secure preImages) and that these are verified (by accessing the associated email).
 
 ### GeneratePoolProofCode.js
 
@@ -34,7 +34,7 @@ This will take as input a set of hashed passwords, and generate the .zok code fo
 
 ### InitialisePool.js
 
-This will be perform the trusted-setup for the zk-SNARK - which in future will be done by the server. All toxic waste should be deleted immediately. 
+This will perform the trusted-setup for the zk-SNARK - which in future will be done by the server. All toxic waste should be deleted immediately. 
 
 This gets the keys necessary for users to generate proofs (client side).
 
