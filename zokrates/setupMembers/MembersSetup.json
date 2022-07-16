@@ -1,0 +1,11 @@
+{
+    "a@bristol.ac.uk": {
+        "preImage" : ["0","0","0","5"]
+    },
+    "b@bristol.ac.uk": {
+        "preImage" : ["0","0","0","6"]
+    },
+    "c@bristol.ac.uk": {
+        "preImage" : ["0","0","0","7"]
+    }
+}
