@@ -32,8 +32,8 @@ logger.write('import "hashes/sha256/512bitPacked" as sha256packed;' + "\r\n")
 // Store the members' hashed passwords as Zokrates variables (global)
 
 for (member in members) {
-    logger.write("const field " + member + "_" + "h0" + " = " +     members[member].proofInput[0]    + ";" + "\r\n") 
-    logger.write("const field " + member + "_" + "h1" + " = " +     members[member].proofInput[1]    + ";" + "\r\n") 
+    logger.write("const field " + member + "_" + "h0" + " = " +     members[member].setupInput[0]    + ";" + "\r\n") 
+    logger.write("const field " + member + "_" + "h1" + " = " +     members[member].setupInput[1]    + ";" + "\r\n") 
 
 }
 
