@@ -60,12 +60,10 @@ function setupMembers(_membersSetup) {
         memberPreImage = (membersSetup[member].preImage)
         proofInput = formatHashDigest(sha256Hash(memberPreImage))
         setupInput = formatHexToBigNumber(proofInput)
-
-        console.log(proofInput)
-        console.log(setupInput)
         membersSetup[member].proofInput = proofInput
         membersSetup[member].setupInput = setupInput
     }
+
     let membersSetupJson = JSON.stringify(membersSetup)
     saveFile("../Members.json", membersSetupJson)
 }
