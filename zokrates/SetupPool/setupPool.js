@@ -1,5 +1,7 @@
 const fs = require("fs");
 const { initialize } = require('zokrates-js')
+const util = require('node:util');
+const exec = util.promisify(require('node:child_process').exec);
 
 /*
 
@@ -11,8 +13,20 @@ const { initialize } = require('zokrates-js')
             + zokrates compile -i Pool.zok
             + zokrates setup
             + zokrates export-verifier
-            
+
 */ 
+
+async function compile(filename) {
+    const {stdout, stderr } = await exec(`zokrates compile -i ${filename}`);
+    console.log('stdout:', stdout);
+    console.log('stderr:', stderr);
+}
+
+async function trustedSetup() {
+    const {stdout, stderr } = await exec('zokrates setup');
+    console.log('stdout:', stdout);
+    console.log('stderr:', stderr);
+}
 
 function writeFile(data, _fileName) {
     fs.writeFileSync(_fileName, data, function(err) {
@@ -21,14 +35,18 @@ function writeFile(data, _fileName) {
 }
 
 async function setupPool(zokratesPath) {
+
+    await compile(zokratesPath);
+    
+    await trustedSetup(); // Running terminal commands instead of zokrates-js 
+
     const zokratesProvider = await initialize();
-    const source = fs.readFileSync(zokratesPath).toString();
-    const artifacts = zokratesProvider.compile(source);
-    const keypair = zokratesProvider.setup(artifacts.program);
-    const verifier = zokratesProvider.exportSolidityVerifier(keypair.vk)
+
+    const verificationKey = JSON.parse(fs.readFileSync("./verification.key"));
+
+    const verifier = zokratesProvider.exportSolidityVerifier(verificationKey)
 
     writeFile(verifier.toString(), '../../contracts/Verifier.sol')
-    writeFile(keypair.pk, './proving.key')
 }
 
-setupPool('../Pool.zok')
+setupPool('./Pool.zok')

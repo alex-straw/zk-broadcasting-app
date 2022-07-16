@@ -13,45 +13,49 @@ Pool Smart Contract:
     """
 */
 
-const members = JSON.parse(fs.readFileSync("./Members.json"));
+function generateZokFile(members) {
+    // Ensure that the file is empty before proceeding:
+    try {
+        fs.unlinkSync(filename)
+    }
+    catch(err) {
+        console.log("No file reset necessary")
+    }
 
-// Ensure that the file is empty before proceeding:
-try {
-    fs.unlinkSync(filename)
+    var logger = fs.createWriteStream(filename, {
+        flags: 'a' // 'a' preserves old data when appending
+    })
+
+    logger.write('import "hashes/sha256/512bitPacked" as sha256packed;' + "\r\n")
+
+    // Store the members' hashed passwords as Zokrates variables (global)
+
+    for (member in members) {
+        logger.write("const field " + member + "_" + "h0" + " = " +     members[member].setupInput[0]    + ";" + "\r\n") 
+        logger.write("const field " + member + "_" + "h1" + " = " +     members[member].setupInput[1]    + ";" + "\r\n") 
+
+    }
+
+    logger.write("\r\n" + "def main(private field a, private field b, private field c, private field d) {" + "\r\n")
+
+    logger.write("    field[2] hash_digest = sha256packed([a, b, c, d]);" + "\r\n")
+
+    logger.write("    field mut is_member = 0;" + "\r\n")
+
+
+    // Check pre-image against all hashes for members within the pool
+    for (member in members) {
+        logger.write("    is_member = is_member + if(hash_digest[0] == " + member + "_" + "h0" + " && hash_digest[1] == " + member + "_" + "h1" + ") { 1 } else { 0 };" + "\r\n") 
+    }
+
+    // Ensure that 1 pre-image has a hash digest within the pool of hashed passwords
+    logger.write("    assert(is_member == 1);"+ "\r\n") 
+
+    logger.write("    return;" + "\r\n")
+
+    logger.write("}")
 }
-catch(err) {
-    console.log("No file reset necessary")
-}
 
-var logger = fs.createWriteStream(filename, {
-    flags: 'a' // 'a' preserves old data when appending
-})
+const members = JSON.parse(fs.readFileSync("../SetupMembers/Members.json"));
 
-logger.write('import "hashes/sha256/512bitPacked" as sha256packed;' + "\r\n")
-
-// Store the members' hashed passwords as Zokrates variables (global)
-
-for (member in members) {
-    logger.write("const field " + member + "_" + "h0" + " = " +     members[member].setupInput[0]    + ";" + "\r\n") 
-    logger.write("const field " + member + "_" + "h1" + " = " +     members[member].setupInput[1]    + ";" + "\r\n") 
-
-}
-
-logger.write("\r\n" + "def main(private field a, private field b, private field c, private field d) {" + "\r\n")
-
-logger.write("    field[2] hash_digest = sha256packed([a, b, c, d]);" + "\r\n")
-
-logger.write("    field mut is_member = 0;" + "\r\n")
-
-
-// Check pre-image against all hashes for members within the pool
-for (member in members) {
-    logger.write("    is_member = is_member + if(hash_digest[0] == " + member + "_" + "h0" + " && hash_digest[1] == " + member + "_" + "h1" + ") { 1 } else { 0 };" + "\r\n") 
-}
-
-// Ensure that 1 pre-image has a hash digest within the pool of hashed passwords
-logger.write("    assert(is_member == 1);"+ "\r\n") 
-
-logger.write("    return;" + "\r\n")
-
-logger.write("}")
+generateZokFile(members);
