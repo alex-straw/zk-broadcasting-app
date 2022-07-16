@@ -68,6 +68,6 @@ function setupMembers(_membersSetup) {
     saveFile("./Members.json", membersSetupJson)
 }
 
-const membersSetup = JSON.parse(fs.readFileSync("./MembersSetup.json"));
+// const membersSetup = JSON.parse(fs.readFileSync("./MembersSetup.json"));
 
-setupMembers(membersSetup);
+// setupMembers(membersSetup);
