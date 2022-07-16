@@ -1,17 +1,17 @@
 import "hashes/sha256/512bitPacked" as sha256packed;
-const field a@bristol.ac.uk_h0 = 0x00000000000000000000000000000000c6481e22c5ff4164af680b8cfaa5e8ed;
-const field a@bristol.ac.uk_h1 = 0x000000000000000000000000000000003120eeff89c4f307c4a6faaae059ce10;
-const field b@bristol.ac.uk_h0 = 0x00000000000000000000000000000000deb2a27a00dbc46e3a59096a8d07d2b9;
-const field b@bristol.ac.uk_h1 = 0x000000000000000000000000000000007f950158886411ff6a9c9ab9623dada6;
-const field c@bristol.ac.uk_h0 = 0x000000000000000000000000000000002ebe6807995c988b9d292b535a815460;
-const field c@bristol.ac.uk_h1 = 0x0000000000000000000000000000000078d93d753a42bf8d15ddcaf2d84be200;
+const field member_1_h0 = 263561599766550617289250058199814760685;
+const field member_1_h1 = 65303172752238645975888084098459749904;
+const field member_2_h0 = 296016139321527823785053958024045515449;
+const field member_2_h1 = 169585634993304848991863197817116667302;
+const field member_3_h0 = 62133134181886812829768166950054220896;
+const field member_3_h1 = 160635334427203623512968684759912538624;
 
 def main(private field a, private field b, private field c, private field d) {
     field[2] hash_digest = sha256packed([a, b, c, d]);
     field mut is_member = 0;
-    is_member = is_member + if(hash_digest[0] == a@bristol.ac.uk_h0 && hash_digest[1] == a@bristol.ac.uk_h1) { 1 } else { 0 };
-    is_member = is_member + if(hash_digest[0] == b@bristol.ac.uk_h0 && hash_digest[1] == b@bristol.ac.uk_h1) { 1 } else { 0 };
-    is_member = is_member + if(hash_digest[0] == c@bristol.ac.uk_h0 && hash_digest[1] == c@bristol.ac.uk_h1) { 1 } else { 0 };
+    is_member = is_member + if(hash_digest[0] == member_1_h0 && hash_digest[1] == member_1_h1) { 1 } else { 0 };
+    is_member = is_member + if(hash_digest[0] == member_2_h0 && hash_digest[1] == member_2_h1) { 1 } else { 0 };
+    is_member = is_member + if(hash_digest[0] == member_3_h0 && hash_digest[1] == member_3_h1) { 1 } else { 0 };
     assert(is_member == 1);
     return;
 }
