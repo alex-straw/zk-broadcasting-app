@@ -33,7 +33,7 @@ async function generatePoolMemberProof(preImage, filename) {
     writeFile(JSON.stringify(proof, null, 2), filename);
 }
 
-const preImage = ["0", "0", "0", "5"]
-const filename = "../TestProofMember_1.json"
+// const preImage = ["0", "0", "0", "5"]
+// const filename = "./TestProofMember_1.json"
 
-generatePoolMemberProof(preImage, filename)
+// generatePoolMemberProof(preImage, filename)
