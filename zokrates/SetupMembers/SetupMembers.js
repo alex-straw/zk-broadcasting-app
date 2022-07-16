@@ -41,6 +41,11 @@ function formatHashDigest(hashDigest) {
     return [_h0pubPadded, _h1pubPadded]
 }
 
+function formatHexToBigNumber(_formattedHexHashArray) {
+    return [ethers.BigNumber.from(_formattedHexHashArray[0]).toString(), ethers.BigNumber.from(_formattedHexHashArray[1]).toString()]
+}
+
+
 function saveFile(path, content) {
     fs.writeFile(path, content, err => {
         if (err) {
@@ -53,7 +58,13 @@ function saveFile(path, content) {
 function setupMembers(_membersSetup) {
     for (member in _membersSetup) {
         memberPreImage = (membersSetup[member].preImage)
-        membersSetup[member].proofInput = formatHashDigest(sha256Hash(memberPreImage))
+        proofInput = formatHashDigest(sha256Hash(memberPreImage))
+        setupInput = formatHexToBigNumber(proofInput)
+
+        console.log(proofInput)
+        console.log(setupInput)
+        membersSetup[member].proofInput = proofInput
+        membersSetup[member].setupInput = setupInput
     }
     let membersSetupJson = JSON.stringify(membersSetup)
     saveFile("../Members.json", membersSetupJson)
