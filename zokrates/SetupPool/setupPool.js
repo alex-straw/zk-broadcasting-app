@@ -46,7 +46,11 @@ async function setupPool(zokratesPath) {
 
     const verifier = zokratesProvider.exportSolidityVerifier(verificationKey)
 
-    writeFile(verifier.toString(), '../../contracts/Verifier.sol')
+    let license = '// SPDX-License-Identifier: GPL-3.0'
+
+    verifierWithLicense = [license, verifier.toString()].join("\r\n")
+
+    writeFile(verifierWithLicense, '../../contracts/Verifier.sol')
 }
 
 setupPool('./Pool.zok')
