@@ -65,7 +65,7 @@ function setupMembers(_membersSetup) {
     }
 
     let membersSetupJson = JSON.stringify(membersSetup)
-    saveFile("../Members.json", membersSetupJson)
+    saveFile("./Members.json", membersSetupJson)
 }
 
 const membersSetup = JSON.parse(fs.readFileSync("./MembersSetup.json"));

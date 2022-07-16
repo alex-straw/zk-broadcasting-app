@@ -10,5 +10,13 @@
     "member_3": {
         "email" : "c@bristol.ac.uk",
         "preImage" : ["0","0","0","7"]
+    },
+    "member_4": {
+        "email" : "d@bristol.ac.uk",
+        "preImage" : ["0","0","0","10"]
+    },
+    "member_5": {
+        "email" : "e@bristol.ac.uk",
+        "preImage" : ["0","0","0","9"]
     }
 }
