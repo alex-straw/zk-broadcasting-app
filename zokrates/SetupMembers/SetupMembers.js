@@ -66,10 +66,11 @@ function setupTestMembers(membersSetup) {
 
         preImage = generatePreImage()
         preImageSetupInput = formatHexToBigNumber(formatBytes32Hash(preImage))
-        hashDigestHexFormatted = formatBytes32Hash(sha256Hash(["0", "0", preImageSetupInput[0], preImageSetupInput[1]]))
+        preImageFormatted = ["0", "0", preImageSetupInput[0], preImageSetupInput[1]]
+        hashDigestHexFormatted = formatBytes32Hash(sha256Hash(preImageFormatted))
         hashDigestDecFormatted = formatHexToBigNumber(hashDigestHexFormatted)
 
-        membersSetup[member].preImage = preImageSetupInput
+        membersSetup[member].preImage = preImageFormatted
         membersSetup[member].proofInputHex = hashDigestHexFormatted
         membersSetup[member].proofInputDec = hashDigestDecFormatted
 
