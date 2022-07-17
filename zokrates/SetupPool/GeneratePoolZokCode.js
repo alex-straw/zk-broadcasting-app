@@ -31,8 +31,8 @@ function generateZokFile(members) {
     // Store the members' hashed passwords as Zokrates variables (global)
 
     for (member in members) {
-        logger.write("const field " + member + "_" + "h0" + " = " +     members[member].setupInput[0]    + ";" + "\r\n") 
-        logger.write("const field " + member + "_" + "h1" + " = " +     members[member].setupInput[1]    + ";" + "\r\n") 
+        logger.write("const field " + member + "_" + "h0" + " = " +     members[member].proofInputDec[0]    + ";" + "\r\n") 
+        logger.write("const field " + member + "_" + "h1" + " = " +     members[member].proofInputDec[1]    + ";" + "\r\n") 
 
     }
 

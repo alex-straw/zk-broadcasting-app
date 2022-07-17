@@ -26,7 +26,7 @@ function padHex(_str, nBytes) {
     return ethers.utils.hexZeroPad(_str, nBytes)
 }
 
-function formatHashDigest(hashDigest) {
+function formatBytes32Hash(hashDigest) {
 
     hashLength = hashDigest.length;
 
@@ -63,11 +63,14 @@ function setupTestMembers(membersSetup) {
         // Concatenate two empty values in 'a' and 'b' - to be of the form [a,b,c,d] - necessary for zokrates
 
         preImage = generatePreImage()
-        proofInput = formatHashDigest(preImage)
-        setupInput = formatHexToBigNumber(proofInput)
-        membersSetup[member].preImage = preImage
-        membersSetup[member].proofInput = proofInput
-        membersSetup[member].setupInput = setupInput
+        preImageSetupInput = (formatBytes32Hash(preImage))
+
+        hashDigestHexFormatted = formatBytes32Hash(sha256Hash(["0", "0", preImageSetupInput[0], preImageSetupInput[1]]))
+        hashDigestDecFormatted = formatHexToBigNumber(hashDigestHexFormatted)
+
+        membersSetup[member].preImage = preImageSetupInput
+        membersSetup[member].proofInputHex = hashDigestHexFormatted
+        membersSetup[member].proofInputDec = hashDigestDecFormatted
 
         // In release preImages will not be stored They will be emailed to corresponding email addresses and deleted.
         // The proofInput and ProofSetup i.e., public hash digest information will be stored

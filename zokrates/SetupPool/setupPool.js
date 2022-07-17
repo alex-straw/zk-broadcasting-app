@@ -17,15 +17,13 @@ const exec = util.promisify(require('node:child_process').exec);
 */ 
 
 async function compile(filename) {
-    const {stdout, stderr } = await exec(`zokrates compile -i ${filename}`);
+    const { stdout } = await exec(`zokrates compile -i ${filename}`);
     console.log('stdout:', stdout);
-    console.log('stderr:', stderr);
 }
 
 async function trustedSetup() {
-    const {stdout, stderr } = await exec('zokrates setup');
+    const { stdout } = await exec('zokrates setup');
     console.log('stdout:', stdout);
-    console.log('stderr:', stderr);
 }
 
 function writeFile(data, _fileName) {
@@ -52,5 +50,7 @@ async function setupPool(zokratesPath) {
 
     writeFile(verifierWithLicense, '../../contracts/Verifier.sol')
 }
+
+// export PATH=$PATH:/home/alex/.zokrates/bin
 
 setupPool('./Pool.zok')
