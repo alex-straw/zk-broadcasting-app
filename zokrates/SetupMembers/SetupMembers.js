@@ -18,6 +18,8 @@ function sha256Hash(preImage) {
     return ethers.utils.soliditySha256(["int128", "int128", "int128", "int128"], [preImage[0], preImage[1], preImage[2], preImage[3]])
 }
 
+// console.log(sha256Hash(["0","0","0",""]))
+
 function addHexLetters(_str) {
     return "0x".concat(_str)
 }
@@ -63,8 +65,7 @@ function setupTestMembers(membersSetup) {
         // Concatenate two empty values in 'a' and 'b' - to be of the form [a,b,c,d] - necessary for zokrates
 
         preImage = generatePreImage()
-        preImageSetupInput = (formatBytes32Hash(preImage))
-
+        preImageSetupInput = formatHexToBigNumber(formatBytes32Hash(preImage))
         hashDigestHexFormatted = formatBytes32Hash(sha256Hash(["0", "0", preImageSetupInput[0], preImageSetupInput[1]]))
         hashDigestDecFormatted = formatHexToBigNumber(hashDigestHexFormatted)
 
