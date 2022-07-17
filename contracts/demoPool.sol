@@ -4,7 +4,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "./demoVerifier.sol";
 
-contract IdentityFactory is Verifier {
+contract demoPool is demoVerifier {
 
     uint public uploadCount = 0;
     string[] public ipfsCIDs;

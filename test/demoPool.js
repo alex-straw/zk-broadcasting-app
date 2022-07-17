@@ -5,6 +5,10 @@ const { ethers } = hre;
 const crypto = require('crypto');
 const fs = require("fs");
 
+const CID_EXAMPLE = 'f01701220c3c4733ec8affd06cf9e9ff50ffc6bcd2ec85a6170004bb709669c31de94391a'
+const VALID_PROOF_MEMBER_1 = JSON.parse(fs.readFileSync("./demo/demoProofs/member_1_proof.json"))
+const INVALID_PROOF = JSON.parse(fs.readFileSync("./demo/demoProofs/invalid_proof.json"))
+
 describe("zk-broadcasting app setup (pool)", function () {
 
     /*
@@ -25,10 +29,16 @@ describe("zk-broadcasting app setup (pool)", function () {
     */
 
     before(async () => {
-        DemoPool = await ethers.getContractFactory("demoContracts/demoPool");
+        DemoPool = await ethers.getContractFactory("demoPool.sol");
         [addr1, addr2] = await ethers.getSigners();
         demoPool = await DemoPool.deploy();
         await demoPool.deployed();
     });
-    
+
+    describe("Broadcast", () => {
+
+        it("Should revert if an EOA sends an invalid proof", async function() {
+            expect(await demoPool.broadcastData(INVALID_PROOF, CID_EXAMPLE)).to.revert("Invalid proof")
+        });
+    });
 });
