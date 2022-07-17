@@ -1,0 +1,11 @@
+{
+    "member_1": {
+        "email" : "a@bristol.ac.uk"
+    },
+    "member_2": {
+        "email" : "b@bristol.ac.uk"
+    },
+    "member_3": {
+        "email" : "c@bristol.ac.uk"
+    }
+}

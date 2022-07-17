@@ -1,5 +1,6 @@
-var fs = require('fs')
+const fs = require('fs')
 const { ethers } = require("ethers");
+const crypto = require('crypto')
 
 /*
 
@@ -55,19 +56,23 @@ function saveFile(path, content) {
     })
 }
 
-function setupMembers(_membersSetup) {
-    for (member in _membersSetup) {
-        memberPreImage = (membersSetup[member].preImage)
-        proofInput = formatHashDigest(sha256Hash(memberPreImage))
+function setupTestMembers(membersSetup) {
+    for (member in membersSetup) {
+        // Generate a random 32 bytes hex string - performed server side
+        // Format this into two 16 byte padded hex strings
+        // Concatenate two empty values in 'a' and 'b' - to be of the form [a,b,c,d] - necessary for zokrates
+
+        proofInput = formatHashDigest(generatePreImage())
         setupInput = formatHexToBigNumber(proofInput)
         membersSetup[member].proofInput = proofInput
-        membersSetup[member].setupInput = setupInput
-    }
 
+        // In release these will not be stored as they are user preImages
+        // They will be emailed to corresponding email addresses and deleted
+        // The proofInput i.e., public hash digest information will be stored
+        membersSetup[member].setupInput = setupInput 
+    }
     let membersSetupJson = JSON.stringify(membersSetup)
     saveFile("./Members.json", membersSetupJson)
 }
 
-// const membersSetup = JSON.parse(fs.readFileSync("./MembersSetup.json"));
-
-// setupMembers(membersSetup);
+setupTestMembers(JSON.parse(fs.readFileSync("./MembersSetupRandom.json")))
