@@ -18,6 +18,7 @@
   "homepage": "https://github.com/alex-straw/zk-broadcasting-app#readme",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.0",
+    "chai": "^4.3.6",
     "ethers": "^5.6.9",
     "hardhat": "^2.10.1"
   },
