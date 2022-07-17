@@ -62,14 +62,15 @@ function setupTestMembers(membersSetup) {
         // Format this into two 16 byte padded hex strings
         // Concatenate two empty values in 'a' and 'b' - to be of the form [a,b,c,d] - necessary for zokrates
 
-        proofInput = formatHashDigest(generatePreImage())
+        preImage = generatePreImage()
+        proofInput = formatHashDigest(preImage)
         setupInput = formatHexToBigNumber(proofInput)
+        membersSetup[member].preImage = preImage
         membersSetup[member].proofInput = proofInput
+        membersSetup[member].setupInput = setupInput
 
-        // In release these will not be stored as they are user preImages
-        // They will be emailed to corresponding email addresses and deleted
-        // The proofInput i.e., public hash digest information will be stored
-        membersSetup[member].setupInput = setupInput 
+        // In release preImages will not be stored They will be emailed to corresponding email addresses and deleted.
+        // The proofInput and ProofSetup i.e., public hash digest information will be stored
     }
     let membersSetupJson = JSON.stringify(membersSetup)
     saveFile("./Members.json", membersSetupJson)
