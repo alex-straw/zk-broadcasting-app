@@ -7,5 +7,14 @@
     },
     "member_3": {
         "email" : "c@bristol.ac.uk"
+    },
+    "member_4": {
+        "email" : "d@bristol.ac.uk"
+    },
+    "member_5": {
+        "email" : "e@bristol.ac.uk"
+    },
+    "member_6": {
+        "email" : "f@bristol.ac.uk"
     }
 }
