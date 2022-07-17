@@ -3,7 +3,6 @@ const { initialize } = require('zokrates-js')
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
-
 // Used to generate a number of proofs in the same way that a user would - for testing purposes
 
 async function generateAllProofs(members, provingKeyPath) {

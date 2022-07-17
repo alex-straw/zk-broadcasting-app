@@ -7,17 +7,14 @@ function writeFile(data, _fileName) {
     });
 }
 
-async function generatePoolMemberProof(preImage, filename) {
+async function generatePoolMemberProof(preImage, provingKeyPath, proofFilePath) {
     const zokratesProvider = await initialize();
-    const source = fs.readFileSync("../Pool.zok").toString();
+    const source = fs.readFileSync("../SetupPool/Pool.zok").toString();
 
     console.log("compilation")
     const artifacts = zokratesProvider.compile(source);
 
-    // console.log("setup")
-    // const keypair = zokratesProvider.setup(artifacts.program);
-
-    const provingKey = fs.readFileSync("../SetupPool/proving.key");
+    const provingKey = fs.readFileSync(provingKeyPath);
 
     console.log("computation")
     const { witness, output } = zokratesProvider.computeWitness(artifacts, [
@@ -30,10 +27,19 @@ async function generatePoolMemberProof(preImage, filename) {
     console.log("generate proof")
     const proof = zokratesProvider.generateProof(artifacts.program, witness, provingKey);
 
-    writeFile(JSON.stringify(proof, null, 2), filename);
+    writeFile(JSON.stringify(proof, null, 2), proofFilePath);
 }
 
-// const preImage = ["0", "0", "0", "5"]
-// const filename = "./TestProofMember_1.json"
+const preImage = [
+    '0',
+    '0',
+    '7658590220440404420676469324975209807',
+    '14820030811989383835308128961039148672'
+]
 
-// generatePoolMemberProof(preImage, filename)
+const provingKeyPath = '../SetupPool/proving.key'
+
+const proofFilePath = 'testProof.json'
+
+generatePoolMemberProof(preImage, provingKeyPath, proofFilePath);
+  
