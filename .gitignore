@@ -9,3 +9,6 @@ zokrates/SetupPool/verification.key
 zokrates/SetupMembers/Members.json
 zokrates/SetupPool/Pool.zok
 contracts/Verifier.sol
+
+artifacts
+cache
