@@ -45,7 +45,7 @@ describe("zk-broadcasting app setup (pool)", function () {
         
     describe("Broadcast data", async function() {
 
-        it("Should revert if an invalid proof is sent", async function () {
+        it("Should revert if an invalid proof is submitted", async function () {
             await expect(demoPool.broadcastData(INVALID_PROOF_1, CID_EXAMPLE)).to.be.reverted;
         });
 
@@ -54,7 +54,7 @@ describe("zk-broadcasting app setup (pool)", function () {
             expect(await demoPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
         });
 
-        it("Should revert if an invalid proof is sent", async function () {
+        it("Should revert if a valid but used proof is submitted", async function () {
             await expect(demoPool.broadcastData(VALID_PROOF_1, CID_EXAMPLE)).to.be.revertedWith(`Proof has already been used`)
         });
     })
