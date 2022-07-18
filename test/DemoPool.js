@@ -3,13 +3,17 @@ const { expect } = require("chai");
 const { assert } = require("console");
 // const { initialize } = require('zokrates-js');
 
+function randomIntFromInterval(min, max) { 
+    return Math.floor(Math.random() * (max-min + 1) + min)
+}
+
+const PROOF_JSON = JSON.parse(fs.readFileSync(`./demo/demoProofs/member_${randomIntFromInterval(1,6)}_proof.json`))
+const VALID_PROOF = [PROOF_JSON.proof.a, PROOF_JSON.proof.b, PROOF_JSON.proof.c]
+
 const CID_EXAMPLE = 'f01701220c3c4733ec8affd06cf9e9ff50ffc6bcd2ec85a6170004bb709669c31de94391a'
 
-const INVALID_PROOF_1_JSON = JSON.parse(fs.readFileSync("./demo/demoProofs/invalid_proof.json"))
-const INVALID_PROOF_1 = [INVALID_PROOF_1_JSON.proof.a, INVALID_PROOF_1_JSON.proof.b, INVALID_PROOF_1_JSON.proof.c]
-
-const PROOF_1_JSON = JSON.parse(fs.readFileSync("./demo/demoProofs/member_1_proof.json"))
-const VALID_PROOF_1 = [PROOF_1_JSON.proof.a, PROOF_1_JSON.proof.b, PROOF_1_JSON.proof.c]
+const INVALID_PROOF_JSON = JSON.parse(fs.readFileSync("./demo/demoProofs/invalid_proof.json"))
+const INVALID_PROOF = [INVALID_PROOF_JSON.proof.a, INVALID_PROOF_JSON.proof.b, INVALID_PROOF_JSON.proof.c]
 
 describe("zk-broadcasting app setup (pool)", function () {
 
@@ -46,16 +50,16 @@ describe("zk-broadcasting app setup (pool)", function () {
     describe("Broadcast data", async function() {
 
         it("Should revert if an invalid proof is submitted", async function () {
-            await expect(demoPool.broadcastData(INVALID_PROOF_1, CID_EXAMPLE)).to.be.reverted;
+            await expect(demoPool.broadcastData(INVALID_PROOF, CID_EXAMPLE)).to.be.reverted;
         });
 
         it("Should upload an IPFS CID if a valid proof is submitted", async function () {
-            await demoPool.broadcastData(VALID_PROOF_1, CID_EXAMPLE);
+            await demoPool.broadcastData(VALID_PROOF, CID_EXAMPLE);
             expect(await demoPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
         });
 
         it("Should revert if a valid but used proof is submitted", async function () {
-            await expect(demoPool.broadcastData(VALID_PROOF_1, CID_EXAMPLE)).to.be.revertedWith(`Proof has already been used`)
+            await expect(demoPool.broadcastData(VALID_PROOF, CID_EXAMPLE)).to.be.revertedWith(`Proof has already been used`)
         });
     })
 });
