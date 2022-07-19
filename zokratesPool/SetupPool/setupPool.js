@@ -35,17 +35,13 @@ function writeFile(data, _fileName) {
 async function setupPool(zokratesPath) {
 
     await compile(zokratesPath);
-    
     await trustedSetup(); // Running terminal commands instead of zokrates-js 
 
     const zokratesProvider = await initialize();
-
     const verificationKey = JSON.parse(fs.readFileSync("./verification.key"));
-
     const verifier = zokratesProvider.exportSolidityVerifier(verificationKey)
 
     let license = '// SPDX-License-Identifier: GPL-3.0'
-
     verifierWithLicense = [license, verifier.toString()].join("\r\n")
 
     writeFile(verifierWithLicense, '../../contracts/Verifier.sol')
@@ -53,4 +49,4 @@ async function setupPool(zokratesPath) {
 
 // export PATH=$PATH:/home/alex/.zokrates/bin
 
-setupPool('./Pool.zok')
+setupPool('./verifyPreImage.zok')
