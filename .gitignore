@@ -1,14 +1,15 @@
 node_modules
 
-zokrates/SetupPool/out
-zokrates/SetupPool/out.r1cs
-zokrates/SetupPool/abi.json
-zokrates/SetupPool/proving.key
-zokrates/SetupPool/verification.key
+zokrates/setupPool/out
+zokrates/setupPool/out.r1cs
+zokrates/setupPool/abi.json
+zokrates/setupPool/proving.key
+zokrates/setupPool/verification.key
+zokrates/setupPool/Pool.zok
 
-zokrates/SetupMembers/Members.json
-zokrates/SetupPool/Pool.zok
+zokrates/setupPasswords/poolPassword.json
+zokrates/setupPasswords/memberPasswords.json
+
 contracts/Verifier.sol
-
 artifacts
 cache
