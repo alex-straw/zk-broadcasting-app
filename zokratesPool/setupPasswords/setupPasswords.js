@@ -77,7 +77,7 @@ function setupMemberPasswords(membersSetup) {
         membersSetup[member].proofInputDec = password.decHash
     }
     let membersSetupJson = JSON.stringify(membersSetup)
-    saveFile("./poolPasswords.json", membersSetupJson)
+    saveFile("./memberPasswords.json", membersSetupJson)
 }
 
 function setupPoolPassword() {
