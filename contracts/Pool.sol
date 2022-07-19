@@ -11,7 +11,7 @@ contract Pool is Verifier {
     uint public verifiedIdCount = 0;
     uint public idCount;
     string[] public ipfsCIDs;
-    uint[2] public groupHashDigest;
+    uint[2] public poolHashDigest;
 
     struct Id {
         uint[2] idHashDigest;
@@ -21,8 +21,8 @@ contract Pool is Verifier {
     mapping(bytes32 => bool) private usedProofs;
     mapping(string => Id) public ids;
 
-    constructor (string[] memory _emails, uint[2][] memory _hashDigests, uint[2] memory _groupHashDigest) {
-        groupHashDigest = _groupHashDigest;
+    constructor (string[] memory _emails, uint[2][] memory _hashDigests, uint[2] memory _poolHashDigest) {
+        poolHashDigest = _poolHashDigest;
         emails = _emails;
         idCount = _hashDigests.length;
         for (uint i=0; i<idCount; i++) {
@@ -41,7 +41,7 @@ contract Pool is Verifier {
     }
 
     function broadcastData(Proof memory proof, string memory cid) allVerified public { 
-        if (verifyTx(proof, groupHashDigest) == true) {
+        if (verifyTx(proof, poolHashDigest) == true) {
             bytes32 proofId = keccak256(abi.encode(proof.a, proof.b, proof.c));
             require(usedProofs[proofId] != true, "Proof has already been used");
             usedProofs[proofId] = true;
