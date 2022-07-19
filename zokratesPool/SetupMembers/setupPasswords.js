@@ -18,8 +18,6 @@ function sha256Hash(preImage) {
     return ethers.utils.soliditySha256(["int128", "int128", "int128", "int128"], [preImage[0], preImage[1], preImage[2], preImage[3]])
 }
 
-// console.log(sha256Hash(["0","0","0",""]))
-
 function addHexLetters(_str) {
     return "0x".concat(_str)
 }
@@ -48,37 +46,44 @@ function formatHexToBigNumber(_formattedHexHashArray) {
     return [ethers.BigNumber.from(_formattedHexHashArray[0]).toString(), ethers.BigNumber.from(_formattedHexHashArray[1]).toString()]
 }
 
-
 function saveFile(path, content) {
     fs.writeFile(path, content, err => {
         if (err) {
             console.error(err);
         }
-        // file written successfully
     })
 }
 
-function setupTestMembers(membersSetup) {
-    for (member in membersSetup) {
-        // Generate a random 32 bytes hex string - performed server side
-        // Format this into two 16 byte padded hex strings
-        // Concatenate two empty values in 'a' and 'b' - to be of the form [a,b,c,d] - necessary for zokrates
-
-        preImage = generatePreImage()
-        preImageSetupInput = formatHexToBigNumber(formatBytes32Hash(preImage))
-        preImageFormatted = ["0", "0", preImageSetupInput[0], preImageSetupInput[1]]
-        hashDigestHexFormatted = formatBytes32Hash(sha256Hash(preImageFormatted))
-        hashDigestDecFormatted = formatHexToBigNumber(hashDigestHexFormatted)
-
-        membersSetup[member].preImage = preImageFormatted
-        membersSetup[member].proofInputHex = hashDigestHexFormatted
-        membersSetup[member].proofInputDec = hashDigestDecFormatted
-
-        // In release preImages will not be stored They will be emailed to corresponding email addresses and deleted.
-        // The proofInput and ProofSetup i.e., public hash digest information will be stored
+function generateHashPassword() {
+    preImage = generatePreImage()
+    preImageSetupInput = formatHexToBigNumber(formatBytes32Hash(preImage))
+    preImageFormatted = ["0", "0", preImageSetupInput[0], preImageSetupInput[1]]
+    hashDigestHexFormatted = formatBytes32Hash(sha256Hash(preImageFormatted))
+    hashDigestDecFormatted = formatHexToBigNumber(hashDigestHexFormatted)
+    const password = {
+        'preImage' : preImageFormatted,
+        'hexHash' : hashDigestHexFormatted,
+        'decHash' : hashDigestDecFormatted
     }
-    let membersSetupJson = JSON.stringify(membersSetup)
-    saveFile("./Members.json", membersSetupJson)
+
+    return password;
 }
 
-setupTestMembers(JSON.parse(fs.readFileSync("./MembersSetupRandom.json")))
+function setupMemberPasswords(membersSetup) {
+    for (member in membersSetup) {
+        password = generateHashPassword();
+        membersSetup[member].preImage = password.preImage
+        membersSetup[member].proofInputHex = password.hexHash
+        membersSetup[member].proofInputDec = password.decHash
+    }
+    let membersSetupJson = JSON.stringify(membersSetup)
+    saveFile("./poolPasswords.json", membersSetupJson)
+}
+
+function setupPoolPassword() {
+    let poolPassword = JSON.stringify(generateHashPassword())
+    saveFile("./poolPassword.json", poolPassword)
+}
+
+setupMemberPasswords(JSON.parse(fs.readFileSync("./poolEmails.json")))
+setupPoolPassword()
