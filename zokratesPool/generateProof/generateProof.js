@@ -58,7 +58,7 @@ async function generatePoolPasswordProof() {
 }
 
 async function generateAllTestProofs() {
-    for (let id=1; i <= 3; i++) {
+    for (let id=1; id <= 3; id++) {
         await generateTestMemberProof(`member${id}`)
     }
     generatePoolPasswordProof()
