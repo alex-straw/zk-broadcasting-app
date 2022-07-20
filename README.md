@@ -2,42 +2,8 @@
 
 This repository is for the MVP stage of my dissertation project.
 
-## Pool.zok
+This code allows for the creation of trusted pools of known identities which are verified using zero-knowledge proofs (zk-SNARKs specifically). The zk-SNARK checks that a user has a valid pre-image for a particular hash digest, without revealing the pre-image itself. Pre-images are generated server-side and sent to the associated email addresses. For the pool to become operational, every user must verify their email using the pre-image sent to their account. In each case, it must match up with their email's respective hash digest which is stored publically on chain. 
 
-Zokrates code - a high level language for writing zk-SNARKs. This will check that an EOA has a valid proof of pre-image for one hash-digest within the pool. This is compiled to 'Verifier.sol'.
+Once all the email addresses have been verified, the pool becomes operational. To remain anonymous, users must submit a proof demonstrating that they have the pre-image for the pool's public hash digest (password). Because this hash digest is the same for all members, any on-chain transactions will not reveal identities. Furthermore, it is recommended that users use new EOAs to submit proofs and not the one used to verify their email address (further work could blacklist these EOS for user protection).
 
-## Pool.sol
-
-(Initially this will be deployed on its own, in future a PoolFactory contract will be used)
-
-The 'Pool.sol' contract will have an associated zk-Proof contract specific to that deployment (Verifier.sol). This cannot be changed and therefore when the pool contract is launched, all associated IDs must be included. In future governance could be used to upgrade the verifier contract when members join and leave.
-
-All email addresses and their associated hash-passwords are checked before launching the contract. Because Verifier.sol handles verification, no email addresses or hash-passwords need to be stored.
-
-This contract keeps track of used proofs (hashed version) to prevent valid proofs from being used again (as these are public on the blockchain).
-
-There is a risk of front-running - and therefore future upgrades will use flashbots to mitigate this.
-
-## Deployment - JavaScript
-
-Create 3 IDs:
-
-1. email: a@bristol.ac.uk, preImage = [0, 0, 0 5]
-2. email: b@bristol.ac.uk, preImage = [0, 0, 0 6]
-3. email: c@bbristol.ac.uk, preImage = [0, 0, 0 7]
-
-Initially this will assume that IDs have been distributed (with more secure preImages) and that these are verified (by accessing the associated email).
-
-### GeneratePoolProofCode.js
-
-This will take as input a set of hashed passwords, and generate the .zok code for the pool.
-
-### InitialisePool.js
-
-This will perform the trusted-setup for the zk-SNARK - which in future will be done by the server. All toxic waste should be deleted immediately. 
-
-This gets the keys necessary for users to generate proofs (client side).
-
-### DeployPool.js
-
-This will deploy the 'Pool.sol' contract (and the associated 'Verifier.sol' contract).
+If a valid proof is subitted, the user is able to publish the content identifier (CID) for a particular file uploaded to IPFS (a distributed file system). Each proof is different, and a hash of each is stored to prevent any proof from being used twice. This is because all transactions are public, enabling a malicious actor to find valid proofs using sites like Etherscan.
