@@ -10,8 +10,6 @@ The user can publish the content identifier (CID) for a particular file uploaded
 
 ## To Run:
 
-+ Make sure to do:
-
 npm install
 
 + Ensure Zokrates is installed (make sure to export path):
