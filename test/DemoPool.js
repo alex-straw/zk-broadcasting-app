@@ -76,21 +76,34 @@ describe("zk-broadcasting app setup (pool)", function () {
         it("Should revert if a valid proof is submitted but with the wrong email", async function () {
             await expect(demoPool.verifyId(emails[0], member2Proof)).to.be.reverted;
         });
+
+        it("Should succeed if a valid proof is submitted with its associated email", async function () {
+            await demoPool.verifyId(emails[0], member1Proof);
+            
+            expect(await demoPool.verifiedIdCount()).to.equal(1);
+        });
+
+        it("Should revert if a valid proof is submitted for an already verified email", async function () {
+            await expect(demoPool.verifyId(emails[0], member1Proof)).to.be.revertedWith("Email has already been verified");
+        })
+
     })
 
-    // describe("Broadcasting", async function() {
+    describe("Broadcast data", async function() {
 
-    //     it("Should revert if an invalid proof is submitted", async function () {
-    //         await expect(demoPool.broadcastData(INVALID_PROOF, CID_EXAMPLE)).to.be.reverted;
-    //     });
+        before (async function() {
+            // Verify the other two members' email addresses
+            await demoPool.verifyId(emails[1], member2Proof);
+            await demoPool.verifyId(emails[2], member3Proof);
+        });
 
-    //     it("Should upload an IPFS CID if a valid proof is submitted", async function () {
-    //         await demoPool.broadcastData(VALID_PROOF, CID_EXAMPLE);
-    //         expect(await demoPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
-    //     });
+        it("Should upload an IPFS CID if a valid proof is submitted and all addresses are verified", async function () {
+            await demoPool.broadcastData(poolPasswordProof, CID_EXAMPLE);
+            expect(await demoPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
+        });
 
-    //     it("Should revert if a valid but used proof is submitted", async function () {
-    //         await expect(demoPool.broadcastData(VALID_PROOF, CID_EXAMPLE)).to.be.revertedWith(`Proof has already been used`)
-    //     });
-    // })
+        it("Should revert if an already used proof is submitted (and all addresses are verified)", async function () {
+            await expect(demoPool.broadcastData(poolPasswordProof, CID_EXAMPLE)).to.be.reverted;
+        });
+    })
 });
