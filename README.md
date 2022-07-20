@@ -10,16 +10,20 @@ The user can publish the content identifier (CID) for a particular file uploaded
 
 ## To Run:
 
+```
 npm install
+```
 
 + Ensure Zokrates is installed (make sure to export path):
 
+```
 curl -LSfs get.zokrat.es | sh
+```
 
+```
 node zokratesPool/setupPasswords/setupPasswords.js
-
 node zokratesPool/setupPool/setupPool.js
-
+```
 
 ### To add:
 
@@ -30,7 +34,9 @@ node zokratesPool/setupPool/setupPool.js
 
 ## Demo (hardhat test)
 
-+ npx hardhat test
-
++ Run:
+```
+npx hardhat test
+```
 This uses a fake set of 3 members, with their hash digests and 3 valid proofs. These can only be used once.
 
