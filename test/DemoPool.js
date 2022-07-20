@@ -47,6 +47,7 @@ const CID_EXAMPLE = 'f01701220c3c4733ec8affd06cf9e9ff50ffc6bcd2ec85a6170004bb709
 const member1Proof = getProof('demo/demoProofs/member1Proof.json')
 const member2Proof = getProof('demo/demoProofs/member2Proof.json')
 const member3Proof = getProof('demo/demoProofs/member3Proof.json')
+const invalidProof = getProof('demo/demoProofs/invalidProof.json')
 const poolPasswordProof = getProof('demo/demoProofs/poolPasswordProof.json')
 
 describe("zk-broadcasting app setup (pool)", function () {
@@ -66,7 +67,18 @@ describe("zk-broadcasting app setup (pool)", function () {
         expect(await demoPool.verifiedIdCount()).to.equal(0);
     })
         
-    // describe("Broadcast data", async function() {
+    describe("Identity verification", async function() {
+
+        it("Should revert if an invalid proof is submitted", async function () {
+            await expect(demoPool.verifyId(emails[0], invalidProof)).to.be.reverted;
+        });
+
+        it("Should revert if a valid proof is submitted but with the wrong email", async function () {
+            await expect(demoPool.verifyId(emails[0], member2Proof)).to.be.reverted;
+        });
+    })
+
+    // describe("Broadcasting", async function() {
 
     //     it("Should revert if an invalid proof is submitted", async function () {
     //         await expect(demoPool.broadcastData(INVALID_PROOF, CID_EXAMPLE)).to.be.reverted;
