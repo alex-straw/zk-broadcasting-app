@@ -38,20 +38,25 @@ async function generateTestMemberProof(memberId) {
     randomly generated passwords.
     */ 
 
-    members = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
-    preImage = members[memberId].preImage
-    decHashDigest = members[memberId].decHash
-    const provingKeyPath = "../setupPool/proving.key"
+    privateMemberDetails = JSON.parse(fs.readFileSync("../../demo/demoPasswords/privateMemberDetails.json"))
+    publicMemberDetails = JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicMemberDetails.json"))
+
+    preImage = privateMemberDetails[memberId].preImage
+    decHashDigest = publicMemberDetails[memberId].decHash
+
+    const provingKeyPath = "../../demo/demoProving.key"
     const proofName = `../../demo/demoProofs/${memberId}Proof.json`
 
     generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, proofName);
 }
 
 async function generatePoolPasswordProof() {
-    poolPassword = JSON.parse(fs.readFileSync("../setupPasswords/poolPassword.json"))
-    preImage = poolPassword["preImage"]
-    decHashDigest = poolPassword["decHash"]
-    const provingKeyPath = "../setupPool/proving.key"
+    privatePoolPassword = JSON.parse(fs.readFileSync("../../demo/demoPasswords/privatePoolPassword.json"))
+    publicPoolPassword = JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicPoolPassword.json"))
+
+    preImage = privatePoolPassword["preImage"]
+    decHashDigest = publicPoolPassword["decHash"]
+    const provingKeyPath = "../../demo/demoProving.key"
     const proofName = '../../demo/demoProofs/poolPasswordProof.json'
 
     generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, proofName)
@@ -62,7 +67,7 @@ async function generateAllTestProofs() {
     for (let id=1; id <= 3; id++) {
         await generateTestMemberProof(`member${id}`)
     }
-    generatePoolPasswordProof()
 }
 
-generateAllTestProofs()
+//generateAllTestProofs()
+generatePoolPasswordProof()
