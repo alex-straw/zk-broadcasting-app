@@ -32,17 +32,28 @@ async function generateProofOfPreImage(preImage, hashDigest, provingKeyPath, pro
     writeFile(JSON.stringify(proof, null, 2), proofName);
 }   
 
-async function generateTestMemberProof() {
+async function generateTestMemberProof(memberId) {
     /* 
     This function is used only for testing proof generation with one of the 
     randomly generated passwords.
     */ 
 
     members = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
-    preImage = members["member_1"].preImage
-    hashDigest = members["member_1"].proofInputDec
+    preImage = members[memberId].preImage
+    hashDigest = members[memberId].proofInputDec
     const provingKeyPath = "../setupPool/proving.key"
-    const proofName = 'testProof.json'
+    const proofName = `${memberId}Proof.json`
 
     generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName);
 }
+
+async function generatePoolPasswordProof() {
+    poolPassword = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
+    preImage = poolPassword.preImage
+    hashDigest = poolPassword.proofInputDec
+    const provingKeyPath = "../setupPool/proving.key"
+    const proofName = 'poolPasswordProof.json'
+
+    generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName);
+}
+
