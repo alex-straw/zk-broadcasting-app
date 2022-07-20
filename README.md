@@ -19,6 +19,8 @@ npm install
 ```
 curl -LSfs get.zokrat.es | sh
 ```
++ Generate passwords
++ Perform trusted setup for zk-SNARK
 
 ```
 node zokratesPool/setupPasswords/setupPasswords.js
