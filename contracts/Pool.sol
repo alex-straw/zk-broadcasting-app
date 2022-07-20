@@ -40,20 +40,24 @@ contract Pool is Verifier {
         }
     }
 
-    function broadcastData(Proof memory proof, string memory cid) allVerified public { 
+    /*
+        1. Checks if a submitted proof is valid. If it is, add the hash of this to a used proofs mapping.
+        2. Check that all accounts have been verified. This must be done after adding the proof to the used
+           proofs array - otherwise, a malicious actor could re-use a valid proof that was submitted before
+           all email addresses were verified (by looking through old tx data).
+        3. Keep track of upload count for easy indexing, and push the CID to an array.
+    */
+
+    function broadcastData(Proof memory proof, string memory cid) public { 
         if (verifyTx(proof, poolHashDigest) == true) {
             bytes32 proofId = keccak256(abi.encode(proof.a, proof.b, proof.c));
             require(usedProofs[proofId] != true, "Proof has already been used");
             usedProofs[proofId] = true;
+            require(verifiedIdCount == idCount, "Not all accounts have been verified");
             uploadCount += 1;
             ipfsCIDs.push(cid);
         } else {
             revert("Invalid proof");
         }
-    }
-
-    modifier allVerified() {
-        require(verifiedIdCount == idCount, "Not all accounts have been verified");
-        _;
     }
 }

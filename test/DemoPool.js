@@ -47,6 +47,7 @@ const CID_EXAMPLE = 'f01701220c3c4733ec8affd06cf9e9ff50ffc6bcd2ec85a6170004bb709
 const member1Proof = getProof('demo/demoProofs/member1Proof.json')
 const member2Proof = getProof('demo/demoProofs/member2Proof.json')
 const member3Proof = getProof('demo/demoProofs/member3Proof.json')
+const invalidProof = getProof('demo/demoProofs/invalidProof.json')
 const poolPasswordProof = getProof('demo/demoProofs/poolPasswordProof.json')
 
 describe("zk-broadcasting app setup (pool)", function () {
@@ -66,19 +67,43 @@ describe("zk-broadcasting app setup (pool)", function () {
         expect(await demoPool.verifiedIdCount()).to.equal(0);
     })
         
-    // describe("Broadcast data", async function() {
+    describe("Identity verification", async function() {
 
-    //     it("Should revert if an invalid proof is submitted", async function () {
-    //         await expect(demoPool.broadcastData(INVALID_PROOF, CID_EXAMPLE)).to.be.reverted;
-    //     });
+        it("Should revert if an invalid proof is submitted", async function () {
+            await expect(demoPool.verifyId(emails[0], invalidProof)).to.be.reverted;
+        });
 
-    //     it("Should upload an IPFS CID if a valid proof is submitted", async function () {
-    //         await demoPool.broadcastData(VALID_PROOF, CID_EXAMPLE);
-    //         expect(await demoPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
-    //     });
+        it("Should revert if a valid proof is submitted but with the wrong email", async function () {
+            await expect(demoPool.verifyId(emails[0], member2Proof)).to.be.reverted;
+        });
 
-    //     it("Should revert if a valid but used proof is submitted", async function () {
-    //         await expect(demoPool.broadcastData(VALID_PROOF, CID_EXAMPLE)).to.be.revertedWith(`Proof has already been used`)
-    //     });
-    // })
+        it("Should succeed if a valid proof is submitted with its associated email", async function () {
+            await demoPool.verifyId(emails[0], member1Proof);
+            
+            expect(await demoPool.verifiedIdCount()).to.equal(1);
+        });
+
+        it("Should revert if a valid proof is submitted for an already verified email", async function () {
+            await expect(demoPool.verifyId(emails[0], member1Proof)).to.be.revertedWith("Email has already been verified");
+        })
+
+    })
+
+    describe("Broadcast data", async function() {
+
+        before (async function() {
+            // Verify the other two members' email addresses
+            await demoPool.verifyId(emails[1], member2Proof);
+            await demoPool.verifyId(emails[2], member3Proof);
+        });
+
+        it("Should upload an IPFS CID if a valid proof is submitted and all addresses are verified", async function () {
+            await demoPool.broadcastData(poolPasswordProof, CID_EXAMPLE);
+            expect(await demoPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
+        });
+
+        it("Should revert if an already used proof is submitted (and all addresses are verified)", async function () {
+            await expect(demoPool.broadcastData(poolPasswordProof, CID_EXAMPLE)).to.be.reverted;
+        });
+    })
 });
