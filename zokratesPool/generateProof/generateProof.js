@@ -7,7 +7,7 @@ function writeFile(data, _fileName) {
     });
 }
 
-async function generatePoolMemberProof(preImage, provingKeyPath, proofFilePath) {
+async function generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName) {
     const zokratesProvider = await initialize();
     const source = fs.readFileSync("../SetupPool/Pool.zok").toString();
 
@@ -21,25 +21,24 @@ async function generatePoolMemberProof(preImage, provingKeyPath, proofFilePath) 
         preImage[0], 
         preImage[1], 
         preImage[2], 
-        preImage[3]
+        preImage[3],
+        hashDigest[0],
+        hashDigest[1]
     ]);
 
     console.log("generate proof")
     const proof = zokratesProvider.generateProof(artifacts.program, witness, provingKey);
 
-    writeFile(JSON.stringify(proof, null, 2), proofFilePath);
+    writeFile(JSON.stringify(proof, null, 2), proofName);
 }
 
-const preImage = [
-    '0',
-    '0',
-    '7658590220440404420676469324975209807',
-    '14820030811989383835308128961039148672'
-]
+members = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
 
-const provingKeyPath = '../SetupPool/proving.key'
+preImage = members[member_1].preImage
+hashDigest = members[member_1].proofInputDec
 
-const proofFilePath = 'testProof.json'
+const provingKeyPath = "../setupPool/proving.key"
+const proofName = 'testProof.json'
 
-generatePoolMemberProof(preImage, provingKeyPath, proofFilePath);
+generatePoolMemberProof(preImage, hashDigest, provingKeyPath, proofName);
   
