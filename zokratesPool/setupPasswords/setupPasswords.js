@@ -73,8 +73,8 @@ function setupMemberPasswords(membersSetup) {
     for (member in membersSetup) {
         password = generateHashPassword();
         membersSetup[member].preImage = password.preImage
-        membersSetup[member].proofInputHex = password.hexHash
-        membersSetup[member].proofInputDec = password.decHash
+        membersSetup[member].hexHash = password.hexHash
+        membersSetup[member].decHash = password.decHash
     }
     let membersSetupJson = JSON.stringify(membersSetup)
     saveFile("./memberPasswords.json", membersSetupJson)
