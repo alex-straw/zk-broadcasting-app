@@ -9,7 +9,7 @@ function writeFile(data, _fileName) {
 
 async function generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName) {
     const zokratesProvider = await initialize();
-    const source = fs.readFileSync("../SetupPool/Pool.zok").toString();
+    const source = fs.readFileSync("../setupPool/verifyPreImage.zok").toString();
 
     console.log("compilation")
     const artifacts = zokratesProvider.compile(source);
@@ -30,15 +30,18 @@ async function generateProofOfPreImage(preImage, hashDigest, provingKeyPath, pro
     const proof = zokratesProvider.generateProof(artifacts.program, witness, provingKey);
 
     writeFile(JSON.stringify(proof, null, 2), proofName);
-}
+}   
+
+
+/* 
+This would be done client side in future - this is purely for testing purpsoes
+*/ 
 
 members = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
-
-preImage = members[member_1].preImage
-hashDigest = members[member_1].proofInputDec
-
+preImage = members["member_1"].preImage
+hashDigest = members["member_1"].proofInputDec
 const provingKeyPath = "../setupPool/proving.key"
 const proofName = 'testProof.json'
 
-generatePoolMemberProof(preImage, hashDigest, provingKeyPath, proofName);
+generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName);
   
