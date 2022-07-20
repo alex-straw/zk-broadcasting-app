@@ -54,6 +54,11 @@ function saveFile(path, content) {
     })
 }
 
+function saveJson(_json, _name) {
+    let _jsonFormatted = JSON.stringify(_json)
+    saveFile(_name, _jsonFormatted)
+}
+
 function generateHashPassword() {
     preImage = generatePreImage()
     preImageSetupInput = formatHexToBigNumber(formatBytes32Hash(preImage))
@@ -70,19 +75,34 @@ function generateHashPassword() {
 }
 
 function setupMemberPasswords(membersSetup) {
+    const publicMemberDetails = JSON.parse(JSON.stringify(membersSetup)); // Copy without reference
+    const privateMemberDetails = JSON.parse(JSON.stringify(membersSetup)); // Copy without reference
+
     for (member in membersSetup) {
         password = generateHashPassword();
-        membersSetup[member].preImage = password.preImage
-        membersSetup[member].hexHash = password.hexHash
-        membersSetup[member].decHash = password.decHash
+        privateMemberDetails[member].preImage = password.preImage
+        publicMemberDetails[member].hexHash = password.hexHash
+        publicMemberDetails[member].decHash = password.decHash
     }
-    let membersSetupJson = JSON.stringify(membersSetup)
-    saveFile("./memberPasswords.json", membersSetupJson)
+    saveJson(privateMemberDetails, "./privateMemberDetails.json")
+    saveJson(publicMemberDetails, "./publicMemberDetails.json")
 }
 
 function setupPoolPassword() {
-    let poolPassword = JSON.stringify(generateHashPassword())
-    saveFile("./poolPassword.json", poolPassword)
+    const poolPassword = generateHashPassword()
+
+    const publicPoolPassword = {
+        'hexHash' : poolPassword.hexHash,
+        'decHash' : poolPassword.decHash
+    }
+
+    const privatePoolPassword = {
+        'preImage' : poolPassword.preImage
+    }
+
+    saveJson(privatePoolPassword, "./privatePoolPassword.json")
+    saveJson(publicPoolPassword, "./publicPoolPassword.json")
+
 }
 
 setupMemberPasswords(JSON.parse(fs.readFileSync("./poolEmails.json")))
