@@ -7,7 +7,7 @@ function writeFile(data, _fileName) {
     })
 }
 
-async function generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName) {
+async function generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, proofName) {
     const zokratesProvider = await initialize()
     const source = fs.readFileSync("../setupPool/verifyPreImage.zok").toString();
 
@@ -22,8 +22,8 @@ async function generateProofOfPreImage(preImage, hashDigest, provingKeyPath, pro
         preImage[1], 
         preImage[2], 
         preImage[3],
-        hashDigest[0],
-        hashDigest[1]
+        decHashDigest[0],
+        decHashDigest[1]
     ])
 
     console.log("generate proof")
@@ -40,24 +40,25 @@ async function generateTestMemberProof(memberId) {
 
     members = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
     preImage = members[memberId].preImage
-    hashDigest = members[memberId].proofInputDec
+    decHashDigest = members[memberId].decHash
     const provingKeyPath = "../setupPool/proving.key"
-    const proofName = `${memberId}Proof.json`
+    const proofName = `../../demo/demoProofs/${memberId}Proof.json`
 
-    generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName);
+    generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, proofName);
 }
 
 async function generatePoolPasswordProof() {
-    poolPassword = JSON.parse(fs.readFileSync("../setupPasswords/memberPasswords.json"))
-    preImage = poolPassword.preImage
-    hashDigest = poolPassword.proofInputDec
+    poolPassword = JSON.parse(fs.readFileSync("../setupPasswords/poolPassword.json"))
+    preImage = poolPassword["preImage"]
+    decHashDigest = poolPassword["decHash"]
     const provingKeyPath = "../setupPool/proving.key"
-    const proofName = 'poolPasswordProof.json'
+    const proofName = '../../demo/demoProofs/poolPasswordProof.json'
 
-    generateProofOfPreImage(preImage, hashDigest, provingKeyPath, proofName)
+    generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, proofName)
 }
 
 async function generateAllTestProofs() {
+    // Using zokrates.js this function can take longer than 10 minutes
     for (let id=1; id <= 3; id++) {
         await generateTestMemberProof(`member${id}`)
     }
