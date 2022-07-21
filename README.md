@@ -2,11 +2,18 @@
 
 This repository is for the MVP stage of my dissertation project.
 
-This code allows for the creation of trusted pools of known identities which are verified using zero-knowledge proofs (zk-SNARKs specifically). The zk-SNARK checks that a user has a valid pre-image for a particular hash digest, without revealing the pre-image itself. Pre-images are generated server-side and sent to the associated email addresses. For the pool to become operational, every user must verify their email using the pre-image sent to their account. Each case must match up with their email's respective hash digest, which is stored publicly on-chain. 
+Semi-Anonymous broadcasting in pools of known identities. Applications include:
++ A pool of university staff at many UK universities, who can organise large-scale strikes without exposing the leader of the union. 
++ A pool of X bank employees who can whistle-blow unethical business practices within their organisation or industry. 
++ A pool of 1000 trustworthy journalists who can release information that may otherwise pose a threat to their safety.
 
-Once all the email addresses have been verified, the pool becomes operational. To remain anonymous, users must submit proof demonstrating that they have the pre-image for the pool's public hash digest (password). Because this hash digest is the same for all members, any on-chain transactions will not reveal identities. Furthermore, it is recommended that users use new EOAs to submit proofs and not the ones used to verify their email addresses (further work could blacklist these EOS for user protection).
+Pools of known identities are verified using zero-knowledge proofs (zk-SNARKs). The zk-SNARK checks that an EOA has a valid pre-image for a particular hash digest, without revealing the pre-image itself. Pre-images are generated server-side and sent to the associated email addresses. 
+First, every user must verify their identity (email) by using the pre-image sent to their email address. Each proof must match up with their email's respective hash digest, which is stored publicly on-chain. 
+
+Once all the email addresses have been verified, the pool becomes operational. To remain anonymous, users must submit proof demonstrating that they have the pre-image for the pool's public hash digest (password). Because this hash digest is the same for all members, any on-chain transactions will not reveal identities. It is recommended that users use new EOAs to submit proofs and not the ones used to verify their email addresses (further work could blacklist these EOS for user protection).
 
 The user can publish the content identifier (CID) for a particular file uploaded to IPFS (a distributed file system) if valid proof is submitted. Each proof is different, and a hash of each is stored to prevent any proof from being used twice. This is because all transactions are public, enabling a malicious actor to find valid proofs using sites like Etherscan.
+
 
 ## To Run:
 
