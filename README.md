@@ -37,7 +37,7 @@ node zokratesPool/setupPool/setupPool.js
 ### To add:
 
 1. Send emails - host this app on an EC2 with high security
-2. Automate Deployment
+2. Automate deployment
 3. Build a website
 
 
