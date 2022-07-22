@@ -3,7 +3,9 @@
 pragma solidity ^0.8.7;
 
 interface IPoolFactory {
-    function verifyTx(Pool.Proof memory proof, uint[2] memory input) external returns(bool);
+    function verifyTx(Pool.Proof memory proof, uint[2] memory input)
+        external
+        returns (bool);
 }
 
 contract Pool {
@@ -25,7 +27,6 @@ contract Pool {
     mapping(string => Id) public ids;
 
     // -------  Proof Type ------- //
-
 
     struct G1Point {
         uint X;
@@ -62,10 +63,17 @@ contract Pool {
 
     // -------  Functions ------- //
 
-
     function verifyId(string memory email, Proof memory proof) public {
-        require(ids[email].verified == false, "Email has already been verified");
-        if (IPoolFactory(poolFactory).verifyTx(proof, ids[email].idHashDigest) == true) {
+        require(
+            ids[email].verified == false,
+            "Email has already been verified"
+        );
+        if (
+            IPoolFactory(poolFactory).verifyTx(
+                proof,
+                ids[email].idHashDigest
+            ) == true
+        ) {
             ids[email].verified = true;
             verifiedIdCount += 1;
         } else {
@@ -86,7 +94,10 @@ contract Pool {
             bytes32 proofId = keccak256(abi.encode(proof.a, proof.b, proof.c));
             require(usedProofs[proofId] != true, "Proof has already been used");
             usedProofs[proofId] = true;
-            require(verifiedIdCount == idCount, "Not all accounts have been verified");
+            require(
+                verifiedIdCount == idCount,
+                "Not all accounts have been verified"
+            );
             uploadCount += 1;
             ipfsCIDs.push(cid);
         } else {

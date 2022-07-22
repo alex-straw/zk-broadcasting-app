@@ -14,11 +14,18 @@ pragma solidity ^0.8.7;
 */
 
 contract PoolFactory is Verifier {
+    
     // -------  State ------- //
     uint256 poolCount = 0;
     string[] poolNames;
-    mapping(string => address) poolAddresses;
     address public owner;
+
+    struct poolAddress {
+        address poolAddress;
+        bool isAddress;
+    }
+
+    mapping(string => poolAddress) public poolAddresses;
 
     constructor() {
         owner = msg.sender;
@@ -30,6 +37,9 @@ contract PoolFactory is Verifier {
         uint256[2][] memory _hashDigests,
         uint256[2] memory _poolHashDigest
     ) public onlyOwner {
+
+        if(poolAddresses[_poolName].isAddress) revert();
+
         Pool pool = new Pool(
             _poolName,
             _emails,
@@ -37,12 +47,21 @@ contract PoolFactory is Verifier {
             _poolHashDigest,
             address(this)
         );
+
         poolNames.push(_poolName);
-        poolAddresses[_poolName] = address(pool);
+        poolAddresses[_poolName] = poolAddress(address(pool), true);
     }
+
+    // -------  Modifiers ------- //
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can call this function");
         _;
     }
+
+    // -------  Getters ------- //
+    function getPoolAddress(string memory _poolName) public view returns(address) {
+        return poolAddresses[_poolName].poolAddress;
+    }
+
 }
