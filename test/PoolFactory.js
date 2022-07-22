@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { exitCode } = require("process");
 
 function getJson(_filepath) {
     return JSON.parse(fs.readFileSync(_filepath))
@@ -87,6 +88,15 @@ describe("PoolFactory.sol Deployment", function () {
 
         it("Has no verified identities", async function () {
             expect(await testPool.verifiedIdCount()).to.equal(0);
+        })
+
+        it("Has incremented the 'poolCount' variable", async function () {
+            expect(await poolFactory.poolCount()).to.equal(1);
+        });
+
+        it("Reverts if a pool with the same name (as another pool) is launched", async function () {
+            await expect(poolFactory.connect(owner).createPool(testPoolName, emails, memberHashDigests, poolHashDigest)).to.be.reverted;
+            expect(await poolFactory.poolCount()).to.equal(1);
         })
             
         describe("Identity verification", async function() {
