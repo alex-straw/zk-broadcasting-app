@@ -16,8 +16,8 @@ pragma solidity ^0.8.7;
 contract PoolFactory is Verifier {
     
     // -------  State ------- //
-    uint256 poolCount = 0;
-    string[] poolNames;
+    uint256 public poolCount = 0;
+    string[] public poolNames;
     address public owner;
 
     struct poolAddress {
@@ -50,6 +50,7 @@ contract PoolFactory is Verifier {
 
         poolNames.push(_poolName);
         poolAddresses[_poolName] = poolAddress(address(pool), true);
+        poolCount += 1;
     }
 
     // -------  Modifiers ------- //
