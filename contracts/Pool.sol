@@ -2,16 +2,19 @@
 
 pragma solidity ^0.8.7;
 
-import "./Verifier.sol";
+interface IPoolFactory {
+    function verifyTx(Pool.Proof memory proof, uint[2] memory input) external returns(bool);
+}
 
-contract Pool is Verifier {
-
-    uint public uploadCount = 0;
+contract Pool {
+    uint256 public uploadCount = 0;
     string[] public emails;
-    uint public verifiedIdCount = 0;
-    uint public idCount;
+    uint256 public verifiedIdCount = 0;
+    uint256 public idCount;
     string[] public ipfsCIDs;
-    uint[2] public poolHashDigest;
+    uint256[2] public poolHashDigest;
+    string poolName;
+    address poolFactory;
 
     struct Id {
         uint[2] idHashDigest;
@@ -21,19 +24,49 @@ contract Pool is Verifier {
     mapping(bytes32 => bool) private usedProofs;
     mapping(string => Id) public ids;
 
-    constructor (string[] memory _emails, uint[2][] memory _hashDigests, uint[2] memory _poolHashDigest) {
+    // -------  Proof Type ------- //
+
+
+    struct G1Point {
+        uint X;
+        uint Y;
+    }
+
+    struct G2Point {
+        uint[2] X;
+        uint[2] Y;
+    }
+
+    struct Proof {
+        G1Point a;
+        G2Point b;
+        G1Point c;
+    }
+
+    constructor(
+        string memory _poolName,
+        string[] memory _emails,
+        uint256[2][] memory _hashDigests,
+        uint256[2] memory _poolHashDigest,
+        address _poolFactory
+    ) {
+        poolName = _poolName;
         poolHashDigest = _poolHashDigest;
         emails = _emails;
+        poolFactory = _poolFactory;
         idCount = _hashDigests.length;
-        for (uint i=0; i<idCount; i++) {
+        for (uint256 i = 0; i < idCount; i++) {
             ids[_emails[i]] = Id(_hashDigests[i], false);
         }
     }
 
+    // -------  Functions ------- //
+
+
     function verifyId(string memory email, Proof memory proof) public {
         require(ids[email].verified == false, "Email has already been verified");
-        if (verifyTx(proof, ids[email].idHashDigest) == true) {
-            ids[email].verified = true; 
+        if (IPoolFactory(poolFactory).verifyTx(proof, ids[email].idHashDigest) == true) {
+            ids[email].verified = true;
             verifiedIdCount += 1;
         } else {
             revert("Invalid proof");
@@ -48,8 +81,8 @@ contract Pool is Verifier {
         3. Keep track of upload count for easy indexing, and push the CID to an array.
     */
 
-    function broadcastData(Proof memory proof, string memory cid) public { 
-        if (verifyTx(proof, poolHashDigest) == true) {
+    function broadcastData(Proof memory proof, string memory cid) public {
+        if (IPoolFactory(poolFactory).verifyTx(proof, poolHashDigest) == true) {
             bytes32 proofId = keccak256(abi.encode(proof.a, proof.b, proof.c));
             require(usedProofs[proofId] != true, "Proof has already been used");
             usedProofs[proofId] = true;
