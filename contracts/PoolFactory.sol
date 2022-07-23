@@ -17,7 +17,8 @@ contract PoolFactory is Verifier {
     // -------  State ------- //
     uint256 public poolCount = 0;
     string[] public poolNames;
-    address public setupAddress;
+    address payable public setupAddress;
+    uint public createFeePerUser = 500000000;
 
     struct poolAddress {
         address poolAddress;
@@ -27,27 +28,44 @@ contract PoolFactory is Verifier {
     mapping(string => poolAddress) public poolAddresses;
 
     constructor() {
-        setupAddress = msg.sender;
+        setupAddress = payable(msg.sender);
     }
 
     function createPool(string memory _poolName, string[] memory _emails)
         public
+        payable
     {
+        uint setupCost = createFeePerUser * _emails.length;
+        require(msg.value >= setupCost, "Please send more Ether to cover the setup costs");
         if (poolAddresses[_poolName].isAddress) revert();
-
         Pool pool = new Pool(_poolName, _emails, setupAddress, address(this));
-
         poolNames.push(_poolName);
         poolAddresses[_poolName] = poolAddress(address(pool), true);
         poolCount += 1;
+        setupAddress.transfer(createFeePerUser * _emails.length);
+    }
+
+    function updateCreateFee(uint _createFeePerUser) public onlySetupAddress {
+        createFeePerUser = _createFeePerUser;
     }
 
     // -------  Getters ------- //
+
     function getPoolAddress(string memory _poolName)
         public
         view
         returns (address)
     {
         return poolAddresses[_poolName].poolAddress;
+    }
+
+    // -------  Modifiers ------- //
+
+    modifier onlySetupAddress() {
+        require(
+            msg.sender == setupAddress,
+            "Only the setup address can call this function"
+        );
+        _;
     }
 }
