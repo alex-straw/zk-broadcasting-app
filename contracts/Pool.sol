@@ -15,10 +15,10 @@ contract Pool {
     uint256 public idCount;
     string[] public ipfsCIDs;
     uint256[2] public poolHashDigest;
-    string poolName;
-    address poolFactory;
-    address setupAddress;
-    bool initialised = false;
+    string public poolName;
+    address public poolFactory;
+    address public setupAddress;
+    bool public initialised = false;
 
     struct Id {
         uint[2] idHashDigest;
