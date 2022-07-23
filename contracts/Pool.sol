@@ -17,6 +17,8 @@ contract Pool {
     uint256[2] public poolHashDigest;
     string poolName;
     address poolFactory;
+    address setupAddress;
+    bool initialised = false;
 
     struct Id {
         uint[2] idHashDigest;
@@ -47,23 +49,35 @@ contract Pool {
     constructor(
         string memory _poolName,
         string[] memory _emails,
-        uint256[2][] memory _hashDigests,
-        uint256[2] memory _poolHashDigest,
+        address _setupAddress,
         address _poolFactory
     ) {
         poolName = _poolName;
-        poolHashDigest = _poolHashDigest;
         emails = _emails;
+        setupAddress = _setupAddress;
         poolFactory = _poolFactory;
+    }
+
+    // -------  Setup ------- //
+
+    function addHashDigests(
+        uint256[2][] memory _hashDigests,
+        uint256[2] memory _poolHashDigest
+    ) public onlySetupAddress notInitialised {
+        poolHashDigest = _poolHashDigest;
         idCount = _hashDigests.length;
         for (uint256 i = 0; i < idCount; i++) {
-            ids[_emails[i]] = Id(_hashDigests[i], false);
+            ids[emails[i]] = Id(_hashDigests[i], false);
         }
+        initialised = true;
     }
 
     // -------  Functions ------- //
 
-    function verifyId(string memory email, Proof memory proof) public {
+    function verifyId(string memory email, Proof memory proof)
+        public
+        isInitialised
+    {
         require(
             ids[email].verified == false,
             "Email has already been verified"
@@ -89,7 +103,10 @@ contract Pool {
         3. Keep track of upload count for easy indexing, and push the CID to an array.
     */
 
-    function broadcastData(Proof memory proof, string memory cid) public {
+    function broadcastData(Proof memory proof, string memory cid)
+        public
+        isInitialised
+    {
         if (IPoolFactory(poolFactory).verifyTx(proof, poolHashDigest) == true) {
             bytes32 proofId = keccak256(abi.encode(proof.a, proof.b, proof.c));
             require(usedProofs[proofId] != true, "Proof has already been used");
@@ -104,4 +121,29 @@ contract Pool {
             revert("Invalid proof");
         }
     }
+
+    // -------  Modifiers ------- //
+
+    modifier onlySetupAddress() {
+        require(
+            msg.sender == setupAddress,
+            "Only the setup address can call this function"
+        );
+        _;
+    }
+
+    modifier isInitialised() {
+        require(
+            !initialised,
+            "The pool must be initialised first by the setup address"
+        );
+        _;
+    }
+
+    modifier notInitialised() {
+        require(initialised, "The pool has already been initialised");
+        _;
+    }
+
+    receive() external payable {}
 }
