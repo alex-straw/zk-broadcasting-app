@@ -88,22 +88,5 @@ function setupMemberPasswords(membersSetup) {
     saveJson(publicMemberDetails, "./publicMemberDetails.json")
 }
 
-function setupPoolPassword() {
-    const poolPassword = generateHashPassword()
-
-    const publicPoolPassword = {
-        'hexHash' : poolPassword.hexHash,
-        'decHash' : poolPassword.decHash
-    }
-
-    const privatePoolPassword = {
-        'preImage' : poolPassword.preImage
-    }
-
-    saveJson(privatePoolPassword, "./privatePoolPassword.json")
-    saveJson(publicPoolPassword, "./publicPoolPassword.json")
-
-}
 
 setupMemberPasswords(JSON.parse(fs.readFileSync("./poolEmails.json")))
-setupPoolPassword()
