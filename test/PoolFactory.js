@@ -11,18 +11,18 @@ function getProof(filePath) {
     return [PROOF_JSON.proof.a, PROOF_JSON.proof.b, PROOF_JSON.proof.c]
 }
 
-function getEmails(publicMemberDetails) {
+function getEmails(publicVerificationDetails) {
     const emails = []
-    for (member in publicMemberDetails) {
-        emails.push(publicMemberDetails[member].email)
+    for (member in publicVerificationDetails) {
+        emails.push(publicVerificationDetails[member].email)
     }
     return emails
 }
 
-function getHashDigests(publicMemberDetails) {
+function getHashDigests(publicVerificationDetails) {
     const hashDigests = []
-    for (member in publicMemberDetails) {
-        hashDigests.push(publicMemberDetails[member].hexHash)
+    for (member in publicVerificationDetails) {
+        hashDigests.push(publicVerificationDetails[member].hexHash)
     }
     return hashDigests
 }
@@ -31,20 +31,28 @@ function getHashDigests(publicMemberDetails) {
     POOL SETUP - ALL PUBLIC INFORMATION
 */
 
-const publicMemberDetails = getJson('demo/demoPasswords/publicMemberDetails.json')
+const publicVerificationDetails = getJson('demo/demoPasswords/publicVerificationDetails.json')
+const publicNewDetails = getJson('demo/demoPasswords/publicNewDetails.json')
 
-const emails = getEmails(publicMemberDetails)
-const verificationHashDigests = getHashDigests(publicMemberDetails)
+const emails = getEmails(publicVerificationDetails)
+const verificationHashDigests = getHashDigests(publicVerificationDetails)
+
 /*
     PRIVATE INFORMATION - VALID PROOFS GENERATED USING PROVING.KEY AND PRE-IMAGES
 */
 
 const CID_EXAMPLE = 'f01701220c3c4733ec8affd06cf9e9ff50ffc6bcd2ec85a6170004bb709669c31de94391a'
 
-const member1Proof = getProof('demo/demoProofs/member1Proof.json')
-const member2Proof = getProof('demo/demoProofs/member2Proof.json')
-const member3Proof = getProof('demo/demoProofs/member3Proof.json')
+const member1VerificationProof = getProof('demo/demoProofs/member1VerificationProof.json')
+const member2VerificationProof = getProof('demo/demoProofs/member2VerificationProof.json')
+const member3VerificationProof = getProof('demo/demoProofs/member3VerificationProof.json')
+
+const member1NewProof = getProof('demo/demoProofs/member1NewProof.json')
+const member2NewProof = getProof('demo/demoProofs/member2VerificationProof.json')
+const member3NewProof = getProof('demo/demoProofs/member3VerificationProof.json')
+
 const invalidProof = getProof('demo/demoProofs/invalidProof.json')
+
 const testPoolName = "testPool"
 const broadcastThreshold = 3;
 
@@ -102,34 +110,36 @@ describe("PoolFactory.sol Deployment", function () {
             expect(await poolFactory.poolCount()).to.equal(1);
         })
 
-        // describe("Identity verification", async function () {
+        describe("Identity verification", async function () {
 
-        //     it("Should revert if an invalid proof is submitted", async function () {
-        //         await expect(testPool.verifyId(emails[0], invalidProof)).to.be.reverted;
-        //     });
+            const member1NewPassword = publicNewDetails["member1"].hexHash
 
-        //     it("Should revert if a valid proof is submitted but with the wrong email", async function () {
-        //         await expect(testPool.verifyId(emails[0], member2Proof)).to.be.reverted;
-        //     });
+            it("Should revert if an invalid proof is submitted", async function () {
+                await expect(testPool.verifyId(0, invalidProof, member1NewPassword)).to.be.reverted;
+            });
 
-        //     it("Should succeed if a valid proof is submitted with its associated email", async function () {
-        //         await testPool.verifyId(emails[0], member1Proof);
+            it("Should revert if a valid proof is submitted but with the wrong member number", async function () {
+                await expect(testPool.verifyId(0, member2VerificationProof, member1NewPassword)).to.be.reverted;
+            });
 
-        //         expect(await testPool.verifiedIdCount()).to.equal(1);
-        //     });
+            it("Should succeed if a valid proof is submitted with its associated member number", async function () {
+                await testPool.verifyId(0, member1VerificationProof, member1NewPassword);
 
-        //     it("Should revert if a valid proof is submitted for an already verified email", async function () {
-        //         await expect(testPool.verifyId(emails[0], member1Proof)).to.be.revertedWith("Email has already been verified");
-        //     })
+                expect(await testPool.verifiedIdCount()).to.equal(1);
+            });
 
-        // })
+            it("Should revert if a valid proof is submitted for an already verified email", async function () {
+                await expect(testPool.verifyId(0, member1VerificationProof, member1NewPassword)).to.be.revertedWith("Email has already been verified");
+            })
+
+        })
 
         // describe("Broadcast data", async function () {
 
         //     before(async function () {
         //         // Verify the other two members' email addresses
-        //         await testPool.verifyId(emails[1], member2Proof);
-        //         await testPool.verifyId(emails[2], member3Proof);
+        //         await testPool.verifyId(emails[1], member2VerificationProof);
+        //         await testPool.verifyId(emails[2], member3VerificationProof);
         //     });
 
         //     it("Should upload an IPFS CID if a valid proof is submitted and all addresses are verified", async function () {
