@@ -12,19 +12,19 @@ contract Pool {
     uint256 public uploadCount = 0;
     string[] public emails;
     uint256 public verifiedIdCount = 0;
+    uint broadcastThreshold;
     uint256 public idCount;
     string[] public ipfsCIDs;
-    uint256[2] public poolHashDigest;
     string poolName;
     address poolFactory;
 
-    struct Id {
-        uint[2] idHashDigest;
+    struct Member {
+        uint[2] hashDigest;
         bool verified;
     }
 
     mapping(bytes32 => bool) private usedProofs;
-    mapping(string => Id) public ids;
+    mapping(uint => Member) public members;
 
     // -------  Proof Type ------- //
 
@@ -47,35 +47,54 @@ contract Pool {
     constructor(
         string memory _poolName,
         string[] memory _emails,
-        uint256[2][] memory _hashDigests,
-        uint256[2] memory _poolHashDigest,
-        address _poolFactory
+        uint256[2][] memory _verificationHashDigests,
+        address _poolFactory,
+        uint _broadcastThreshold
     ) {
         poolName = _poolName;
-        poolHashDigest = _poolHashDigest;
         emails = _emails;
         poolFactory = _poolFactory;
-        idCount = _hashDigests.length;
+        broadcastThreshold = _broadcastThreshold;
+        idCount = _verificationHashDigests.length;
+        require(
+            broadcastThreshold <= idCount,
+            "Threshold cannot be higher than total number of members"
+        );
         for (uint256 i = 0; i < idCount; i++) {
-            ids[_emails[i]] = Id(_hashDigests[i], false);
+            members[i] = Member(_verificationHashDigests[i], false);
         }
     }
 
     // -------  Functions ------- //
 
-    function verifyId(string memory email, Proof memory proof) public {
+    function setNewUserHash(uint _memberNumber, uint[2] memory _newHashDigest)
+        internal
+    {
         require(
-            ids[email].verified == false,
+            members[_memberNumber].verified,
+            "Cannot update a password unless the member is verified"
+        ); // Sanity check
+        members[_memberNumber].hashDigest = _newHashDigest;
+    }
+
+    function verifyId(
+        uint memberNumber,
+        Proof memory proof,
+        uint[2] memory newHashDigest
+    ) public {
+        require(
+            !members[memberNumber].verified,
             "Email has already been verified"
         );
         if (
             IPoolFactory(poolFactory).verifyTx(
                 proof,
-                ids[email].idHashDigest
+                members[memberNumber].hashDigest
             ) == true
         ) {
-            ids[email].verified = true;
+            members[memberNumber].verified = true;
             verifiedIdCount += 1;
+            setNewUserHash(memberNumber, newHashDigest);
         } else {
             revert("Invalid proof");
         }
@@ -89,14 +108,27 @@ contract Pool {
         3. Keep track of upload count for easy indexing, and push the CID to an array.
     */
 
-    function broadcastData(Proof memory proof, string memory cid) public {
-        if (IPoolFactory(poolFactory).verifyTx(proof, poolHashDigest) == true) {
+    function broadcastData(
+        uint memberNumber,
+        Proof memory proof,
+        string memory cid
+    ) public {
+        if (
+            IPoolFactory(poolFactory).verifyTx(
+                proof,
+                members[memberNumber].hashDigest
+            ) == true
+        ) {
             bytes32 proofId = keccak256(abi.encode(proof.a, proof.b, proof.c));
             require(usedProofs[proofId] != true, "Proof has already been used");
             usedProofs[proofId] = true;
             require(
-                verifiedIdCount == idCount,
-                "Not all accounts have been verified"
+                members[memberNumber].verified,
+                "This account is not verified"
+            );
+            require(
+                verifiedIdCount >= broadcastThreshold,
+                "More members must verify their accounts before broadcasting"
             );
             uploadCount += 1;
             ipfsCIDs.push(cid);
