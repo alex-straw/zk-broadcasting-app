@@ -1,6 +1,16 @@
 const fs = require("fs");
 const { initialize } = require('zokrates-js')
 
+/*
+
+This file is used to mass-generate a set of proofs of pre-image for:
+    + The initial verification pre-images sent to each email
+    + Some 'mock' user secrets that would replace those sent to email
+
+This is performed purely to see that Hardhat is functioning correctly - and takes a long time using Zokrates-JS.
+
+*/
+
 function writeFile(data, _fileName) {
     fs.writeFile(_fileName, data, function(err) {
         if (err) return console.log(err)
@@ -32,28 +42,28 @@ async function generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, 
     writeFile(JSON.stringify(proof, null, 2), proofName)
 }   
 
-async function generateTestMemberProof(memberId) {
+async function generateTestMemberProof(memberId, privateJson, publicJson, proofSuffix) {
     /* 
     This function is used only for testing proof generation with one of the 
     randomly generated passwords.
     */ 
 
-    privateMemberDetails = JSON.parse(fs.readFileSync("../../demo/demoPasswords/privateMemberDetails.json"))
-    publicMemberDetails = JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicMemberDetails.json"))
-
-    preImage = privateMemberDetails[memberId].preImage
-    decHashDigest = publicMemberDetails[memberId].decHash
+    preImage = privateJson[memberId].preImage
+    decHashDigest = publicJson[memberId].decHash
 
     const provingKeyPath = "../../demo/proving.key"
-    const proofName = `../../demo/demoProofs/${memberId}Proof.json`
+    const proofName = `../../demo/demoProofs/${memberId}${proofSuffix}Proof.json`
 
     generateProofOfPreImage(preImage, decHashDigest, provingKeyPath, proofName);
 }
 
 async function generateAllTestProofs() {
-    // Using zokrates.js this function can take longer than 10 minutes
     for (let id=1; id <= 3; id++) {
-        await generateTestMemberProof(`member${id}`)
+        await generateTestMemberProof(`member${id}`, JSON.parse(fs.readFileSync("../../demo/demoPasswords/privateVerificationDetails.json")), JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicVerificationDetails.json")), 'Verification')
+    }
+    
+    for (let id=1; id <= 3; id++) {
+        await generateTestMemberProof(`member${id}`, JSON.parse(fs.readFileSync("../../demo/demoPasswords/privateNewDetails.json")), JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicNewDetails.json")), 'Verification')
     }
 }
 

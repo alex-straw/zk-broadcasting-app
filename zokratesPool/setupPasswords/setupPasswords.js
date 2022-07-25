@@ -74,7 +74,7 @@ function generateHashPassword() {
     return password;
 }
 
-function setupMemberPasswords(membersSetup) {
+function setupPasswords(membersSetup, fileSuffix) {
     const publicMemberDetails = JSON.parse(JSON.stringify(membersSetup)); // Copy without reference
     const privateMemberDetails = JSON.parse(JSON.stringify(membersSetup)); // Copy without reference
 
@@ -84,9 +84,13 @@ function setupMemberPasswords(membersSetup) {
         publicMemberDetails[member].hexHash = password.hexHash
         publicMemberDetails[member].decHash = password.decHash
     }
-    saveJson(privateMemberDetails, "./privateMemberDetails.json")
-    saveJson(publicMemberDetails, "./publicMemberDetails.json")
+    saveJson(privateMemberDetails, `../../demo/demoPasswords/private${fileSuffix}.json`)
+    saveJson(publicMemberDetails, `../../demo/demoPasswords/public${fileSuffix}.json`)
 }
 
+// One time verification passwords
+setupPasswords(JSON.parse(fs.readFileSync("../../demo/demoPasswords/poolEmails.json")), fileSuffix = 'VerificationDetails')
 
-setupMemberPasswords(JSON.parse(fs.readFileSync("./poolEmails.json")))
+// What the user would generate on their end - but generated here for testing
+setupPasswords(JSON.parse(fs.readFileSync("../../demo/demoPasswords/poolEmails.json")), fileSuffix = 'NewDetails')
+
