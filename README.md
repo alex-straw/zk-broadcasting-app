@@ -7,13 +7,17 @@ Semi-Anonymous broadcasting in pools of known identities. Applications include:
 + A pool of X bank employees who can whistle-blow unethical business practices within their organisation or industry. 
 + A pool of 1000 trustworthy journalists who can release information that may otherwise pose a threat to their safety.
 
-Pools of known identities are verified using zero-knowledge proofs (zk-SNARKs). The zk-SNARK checks that an EOA has a valid pre-image for a particular hash digest, without revealing the pre-image itself. Pre-images are generated server-side and sent to the associated email addresses. 
-First, every user must verify their identity (email) by using the pre-image sent to their email address. Each proof must match up with their email's respective hash digest, which is stored publicly on-chain. 
+Pools of known identities are verified using zero-knowledge proofs (zk-SNARKs). The zk-SNARK checks that an EOA has a valid pre-image for a particular hash digest, without revealing the pre-image itself. 
 
-Once all the email addresses have been verified, the pool becomes operational. To remain anonymous, users must submit proof demonstrating that they have the pre-image for the pool's public hash digest (password). Because this hash digest is the same for all members, any on-chain transactions will not reveal identities. It is recommended that users use new EOAs to submit proofs and not the ones used to verify their email addresses (further work could blacklist these EOS for user protection).
+Prototype:
 
-The user can publish the content identifier (CID) for a particular file uploaded to IPFS (a distributed file system) if valid proof is submitted. Each proof is different, and a hash of each (valid) submitted proof is stored to prevent it from being used twice. Otherwise, anyone could find a valid proof from a site like Etherscan to infiltrate the pool and post content.
+A list of 'n' email addresses will be submitted by a pseudonymous EOA. This will trigger an AWS event (Event Bridge) to run a Lambda function which will generate 'n' 32-byte pre-images. Each submitted email will receive one of these pre-images, whilst simultaneously the sha3-256 hash of each will be stored on the pool contract. Each email must verify that they have the pre-image for the on-chain hash, whilst also submitting a new hashed password (with pre-image generated locally) to replace the one sent by the trusted AWS server. This is done to de-risk email hacks. In doing this, pseudonymous EOAs verify that they have access to one of the associated email accounts (without revealing which one). Once all the email addresses have been verified (or after a certain 'broadcastThreshold' has been exceeded), the pool becomes operational. 
 
+To broadcast data, users must submit proof demonstrating that they have the pre-image for one of the new hashed secrets (new passwords set by verified users) and submit a corresponding IPFS CID hash (the broadcast). Because each hash digest has no associated email, on-chain transactions will not reveal specific identities. It is recommended that users use new EOAs with each transaction.
+
+Each zk-SNARK has a trusted setup ceremony, which comes with risk if the user that performs this task does not delete the source of randomness (toxic waste) - this enables them to create fake but valid proofs. This is only conducted once when the poolFactory is deployed - and this zk-SNARK is used for all pools to verify knowledge of hash pre-images. In the future, multi-party-computation should be used to perform this ceremony, where only 1/n individual needs to be honest to prevent malicious actors from generating fake but valid proofs.
+
+Each proof is different, and a hash of each (valid) submitted proof is stored to prevent it from being used twice. Otherwise, anyone could find a valid proof from a site like Etherscan to infiltrate the pool and post content.
 
 ## To Run:
 
@@ -26,26 +30,36 @@ npm install
 ```
 curl -LSfs get.zokrat.es | sh
 ```
-+ Generate passwords
-+ Perform trusted setup for zk-SNARK
+
+## Demo (hardhat test)
+
+Ensure that you are in the root directory. This uses a fake set of 3 members. Each has a pre-generated proof for the server-set verification hash digest, and the 'random' client-side hash digest (new password).
+
++ Run Hardhat Tests
+
+```
+npx hardhat test
+```
+
+## Development (Misc)
+
++ Generate new random passwords (new proofs will need to be generated)
 
 ```
 node zokratesPool/setupPasswords/setupPasswords.js
+```
+
++ Perform trusted setup for the zk-SNARK
+  + New proving key
+  + Original verifier.sol will no longer work (as it is setup specific)
+  + Demo proofs will not work
+
+```
 node zokratesPool/setupPool/setupPool.js
 ```
 
 ### To add:
 
-1. Send emails - host this app on an EC2 with high security
+1. AWS Backend
 2. Automate deployment
 3. Build a website
-
-
-## Demo (hardhat test)
-
-+ Run:
-```
-npx hardhat test
-```
-This uses a fake set of 3 members, with their hash digests and 3 valid proofs. These can only be used once.
-
