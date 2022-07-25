@@ -63,7 +63,7 @@ async function generateAllTestProofs() {
     }
     
     for (let id=1; id <= 3; id++) {
-        await generateTestMemberProof(`member${id}`, JSON.parse(fs.readFileSync("../../demo/demoPasswords/privateNewDetails.json")), JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicNewDetails.json")), 'Verification')
+        await generateTestMemberProof(`member${id}`, JSON.parse(fs.readFileSync("../../demo/demoPasswords/privateNewDetails.json")), JSON.parse(fs.readFileSync("../../demo/demoPasswords/publicNewDetails.json")), 'New')
     }
 }
 
