@@ -134,22 +134,22 @@ describe("PoolFactory.sol Deployment", function () {
 
         })
 
-        // describe("Broadcast data", async function () {
+        describe("Broadcast data", async function () {
 
-        //     before(async function () {
-        //         // Verify the other two members' email addresses
-        //         await testPool.verifyId(emails[1], member2VerificationProof);
-        //         await testPool.verifyId(emails[2], member3VerificationProof);
-        //     });
+            before(async function () {
+                // Verify the other two members' email addresses
+                await testPool.verifyId(1, member2VerificationProof, publicNewDetails["member2"].hexHash);
+                await testPool.verifyId(2, member3VerificationProof, publicNewDetails["member3"].hexHash);
+            });
 
-        //     it("Should upload an IPFS CID if a valid proof is submitted and all addresses are verified", async function () {
-        //         await testPool.broadcastData(poolPasswordProof, CID_EXAMPLE);
-        //         expect(await testPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
-        //     });
+            it("Should upload an IPFS CID if a valid proof for a new password is submitted and enough accounts are verified", async function () {
+                await testPool.broadcastData(0, member1NewProof, CID_EXAMPLE);
+                expect(await testPool.ipfsCIDs(0)).to.equal(CID_EXAMPLE);
+            });
 
-        //     it("Should revert if an already used proof is submitted (and all addresses are verified)", async function () {
-        //         await expect(testPool.broadcastData(poolPasswordProof, CID_EXAMPLE)).to.be.reverted;
-        //     });
-        // });
+            it("Should revert if an already used proof is submitted (and all addresses are verified)", async function () {
+                await expect(testPool.broadcastData(0, member1NewProof, CID_EXAMPLE)).to.be.reverted;
+            });
+        });
     });
 });
