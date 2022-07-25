@@ -7,14 +7,6 @@ zokratesPool/setupPool/proving.key
 zokratesPool/setupPool/verification.key
 zokratesPool/setupPool/Pool.zok
 
-zokratesPool/setupPasswords/poolPassword.json
-zokratesPool/setupPasswords/memberPasswords.json
-
-zokratesPool/setupPasswords/privateMemberDetails.json
-zokratesPool/setupPasswords/publicMemberDetails.json
-zokratesPool/setupPasswords/privatePoolPassword.json
-zokratesPool/setupPasswords/publicPoolPassword.json
-
 contracts/Verifier.sol
 artifacts
 cache
