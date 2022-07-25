@@ -11,11 +11,11 @@ Pools of known identities are verified using zero-knowledge proofs (zk-SNARKs). 
 
 Prototype:
 
-A list of 'n' email addresses will be submitted by a pseudonymous EOA. This will trigger an AWS event (EventBridge) to run a Lambda function which will generate 'n' 32 byte pre-images. Each submitted email will receive one of these pre-images, whilst simultaneously the sha3-256 hash of each will be stored on the pool contract. Each email must verify that they have the pre-image for the on-chain hash, whilst also submitting a new hashed password (with pre-image generated locally) to replace the one sent by the trusted AWS sever. This is done to de-risk against email hacks. In doing this, pseudononymous EOAs verify that they have access to one of the associated email accounts (without revealing which one).Once all the email addresses have been verified (or after a certain 'broadcastThreshold' has been exceeded), the pool becomes operational. 
+A list of 'n' email addresses will be submitted by a pseudonymous EOA. This will trigger an AWS event (Event Bridge) to run a Lambda function which will generate 'n' 32-byte pre-images. Each submitted email will receive one of these pre-images, whilst simultaneously the sha3-256 hash of each will be stored on the pool contract. Each email must verify that they have the pre-image for the on-chain hash, whilst also submitting a new hashed password (with pre-image generated locally) to replace the one sent by the trusted AWS server. This is done to de-risk email hacks. In doing this, pseudonymous EOAs verify that they have access to one of the associated email accounts (without revealing which one). Once all the email addresses have been verified (or after a certain 'broadcastThreshold' has been exceeded), the pool becomes operational. 
 
-To broadcast data, users must submit proof demonstrating that they have the pre-image for one of the new hashed secrets (new passwords set by verified users), and submit a corresponding IPFS CID hash (the broadcast). Because each hash digest has no associated email, on-chain transactions will not reveal specific identities. It is recommended that users use new EOAs with each transaction.
+To broadcast data, users must submit proof demonstrating that they have the pre-image for one of the new hashed secrets (new passwords set by verified users) and submit a corresponding IPFS CID hash (the broadcast). Because each hash digest has no associated email, on-chain transactions will not reveal specific identities. It is recommended that users use new EOAs with each transaction.
 
-Each zk-SNARK has a trusted setup ceremony, which comes with risk if the user that performs this task does not delete the source of randomness (toxic-waste) - this enables them to create fake but valid proofs. This is only conducted once when the poolFactory is deployed - and this zk-SNARK is used for all pools to verify knowledge of hash pre-images. In future multi-party-computation should be used to perform this ceremony, where only 1/n individuals needs to be honest to prevent malicious actors generating fake but valid proofs.
+Each zk-SNARK has a trusted setup ceremony, which comes with risk if the user that performs this task does not delete the source of randomness (toxic waste) - this enables them to create fake but valid proofs. This is only conducted once when the poolFactory is deployed - and this zk-SNARK is used for all pools to verify knowledge of hash pre-images. In the future, multi-party-computation should be used to perform this ceremony, where only 1/n individual needs to be honest to prevent malicious actors from generating fake but valid proofs.
 
 Each proof is different, and a hash of each (valid) submitted proof is stored to prevent it from being used twice. Otherwise, anyone could find a valid proof from a site like Etherscan to infiltrate the pool and post content.
 
@@ -67,7 +67,7 @@ node zokratesPool/setupPool/setupPool.js
 
 ## Demo (hardhat test)
 
-Ensure that you are in the root directory. This uses a fake set of 3 members. Each has a pre-generated proof for the server-set verification hash digest, and the 'random' client-side hash digest (new password).
+Ensure that you are in the root directory. This uses a fake set of 3 members. Each has a pre-generated proof for the server-set verification hash digest and the 'random' updated hash digest (client-side new password).
 
 + Run Hardhat Tests
 
