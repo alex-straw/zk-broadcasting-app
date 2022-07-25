@@ -63,14 +63,3 @@ node zokratesPool/setupPool/setupPool.js
 1. AWS Backend
 2. Automate deployment
 3. Build a website
-
-
-## Demo (hardhat test)
-
-Ensure that you are in the root directory. This uses a fake set of 3 members. Each has a pre-generated proof for the server-set verification hash digest and the 'random' updated hash digest (client-side new password).
-
-+ Run Hardhat Tests
-
-```
-npx hardhat test
-```
