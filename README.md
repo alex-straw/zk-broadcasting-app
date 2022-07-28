@@ -19,6 +19,10 @@ Each zk-SNARK has a trusted setup ceremony, which comes with risk if the user th
 
 Each proof is different, and a hash of each (valid) submitted proof is stored to prevent it from being used twice. Otherwise, anyone could find a valid proof from a site like Etherscan to infiltrate the pool and post content.
 
+# Current Prototype Deployment (Kovan)
+
+Pool Factory Address: ` 0xBb5Cc0f2a206BF42c1cbE6Bb32A1d2ED6352feDF `
+
 ## To Run:
 
 ```
@@ -32,6 +36,21 @@ curl -LSfs get.zokrat.es | sh
 ```
 
 ## To Deploy:
+
++ In root directory
+```
+touch .env
+```
+
++ Inside the .env file:
+  + Add a set of API keys (Infura) for Rinkeby and Kovan
+  + Add a private key for an Ethereum account (you will need some test Ether in this account to deploy)
+
+```
+RINKEBY_API_KEY = "https://rinkeby.infura.io/v3/********************************"
+KOVAN_API_KEY = "https://kovan.infura.io/v3/********************************"
+PRIVATE_KEY = "****************************************************************"
+```
 
 ```
 npx hardhat run deploy/deploy.js
