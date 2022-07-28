@@ -54,6 +54,8 @@ KOVAN_API_KEY = "https://kovan.infura.io/v3/********************************"
 PRIVATE_KEY = "****************************************************************"
 ```
 
+## Deploy to Kovan
+
 ```
 npx hardhat run deploy/deploy.js
 ```
