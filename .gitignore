@@ -5,6 +5,8 @@ zokratesPool/setupPool/out.r1cs
 zokratesPool/setupPool/abi.json
 zokratesPool/setupPool/proving.key
 zokratesPool/setupPool/Pool.zok
+zokratesPool/setupPool/verification.key
+
 
 artifacts
 cache
