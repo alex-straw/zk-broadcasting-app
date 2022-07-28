@@ -25,7 +25,7 @@ Pool Factory Address: ` 0xBb5Cc0f2a206BF42c1cbE6Bb32A1d2ED6352feDF `
 
 # Deploy Your Own PoolFactory
 
-## Install Dependencies:
+### Install Dependencies:
 
 ```
 npm install
@@ -37,7 +37,7 @@ npm install
 curl -LSfs get.zokrat.es | sh
 ```
 
-## .env
+### .env
 
 + In the root directory
 ```
@@ -54,13 +54,13 @@ KOVAN_API_KEY = "https://kovan.infura.io/v3/********************************"
 PRIVATE_KEY = "****************************************************************"
 ```
 
-## Deploy to Kovan
+### Deploy to Kovan
 
 ```
 npx hardhat run deploy/deploy.js
 ```
 
-## Demo (hardhat test)
+# Demo (hardhat test)
 
 Ensure that you are in the root directory. This uses a fake set of 3 members. Each has a pre-generated proof for the server-set verification hash digest, and the 'random' client-side hash digest (new password).
 
@@ -70,7 +70,7 @@ Ensure that you are in the root directory. This uses a fake set of 3 members. Ea
 npx hardhat test
 ```
 
-## Development (Misc)
+### Development (Misc)
 
 + Generate new random passwords (new proofs will need to be generated)
 
