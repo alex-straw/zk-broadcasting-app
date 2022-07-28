@@ -6,7 +6,7 @@ zokratesPool/setupPool/abi.json
 zokratesPool/setupPool/proving.key
 zokratesPool/setupPool/Pool.zok
 zokratesPool/setupPool/verification.key
-
+.env
 
 artifacts
 cache
