@@ -1,9 +1,9 @@
 const { ethers } = require("hardhat");
 const poolFactoryABI = require("./abis/PoolFactory.json");
 
-async function main() {
-    const poolFactoryAddress = "0xBb5Cc0f2a206BF42c1cbE6Bb32A1d2ED6352feDF";
-    const provider = new ethers.providers.WebSocketProvider(process.env.KOVAN_WEBSOCKET_KEY);
+async function main(_poolname) {
+    const poolFactoryAddress = "0x4Cd7249632Df70A27324bd69725727a96Fc47729";
+    const provider = new ethers.getDefaultProvider("kovan")
     const contract = new ethers.Contract(poolFactoryAddress, poolFactoryABI, provider);
 
     /*
@@ -12,18 +12,27 @@ async function main() {
         address indexed _from,
         uint _idCount,
         uint _feePaid
-
     */
 
-    contract.on("PoolRequest", (_poolname, _from, _idCount, _feePaid) => {
-        let info = {
-            'poolname': _poolname,
-            'from': _from,
-            'idCount': _idCount,
-            'feePaid': ethers.utils.formatUnits(_feePaid, 18),
-        }
-        console.log(JSON.stringify(info, null, 4))
-    });
+    filterByName = contract.filters.PoolRequest(_poolname, null);
+
+    // events = await contract.queryFilter(filterName);
+
+    let pastEvent = await contract.queryFilter(filterByName);
+
+    info = {
+        'hashName': pastEvent[0].args[0].hash,
+        'from': pastEvent[0].args[1],
+        'idCount': pastEvent[0].args[2],
+        'feePaid': pastEvent[0].args[3]
+    };
+
+    console.log(info)
+    
+    gasPrice = await provider.getGasPrice()
+
+    console.log(gasPrice)
+    return
 }
 
-main();
+main("name");
