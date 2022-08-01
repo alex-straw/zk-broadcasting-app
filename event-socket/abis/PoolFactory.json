@@ -149,7 +149,12 @@
 			},
 			{
 				"internalType": "bool",
-				"name": "isAddress",
+				"name": "isPending",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "isDeployed",
 				"type": "bool"
 			}
 		],
