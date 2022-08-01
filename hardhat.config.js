@@ -3,7 +3,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
-const RINKEBY_API_KEY = process.env.RINKEBY_API_KEY;
 const KOVAN_API_KEY = process.env.KOVAN_API_KEY;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
@@ -13,10 +12,6 @@ module.exports = {
     hardhat: {},
     kovan: {
       url: KOVAN_API_KEY,
-      accounts: [PRIVATE_KEY],
-    },
-    rinkeby: {
-      url: RINKEBY_API_KEY,
       accounts: [PRIVATE_KEY],
     },
   },

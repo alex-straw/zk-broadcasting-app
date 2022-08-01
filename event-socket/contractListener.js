@@ -3,7 +3,7 @@ const poolFactoryABI = require("./abis/PoolFactory.json");
 
 async function main() {
     const poolFactoryAddress = "0xBb5Cc0f2a206BF42c1cbE6Bb32A1d2ED6352feDF";
-    const provider = new ethers.providers.WebSocketProvider(process.env.KOVAN_API_KEY);
+    const provider = new ethers.providers.WebSocketProvider(process.env.KOVAN_WEBSOCKET_KEY);
     const contract = new ethers.Contract(poolFactoryAddress, poolFactoryABI, provider);
 
     /*
