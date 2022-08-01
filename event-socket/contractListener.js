@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 const poolFactoryABI = require("./abis/PoolFactory.json");
 
-async function main(_poolname) {
+async function main(event) {
     const poolFactoryAddress = "0x4Cd7249632Df70A27324bd69725727a96Fc47729";
     const provider = new ethers.getDefaultProvider("kovan")
     const contract = new ethers.Contract(poolFactoryAddress, poolFactoryABI, provider);
@@ -14,7 +14,7 @@ async function main(_poolname) {
         uint _feePaid
     */
 
-    filterByName = contract.filters.PoolRequest(_poolname, null);
+    filterByName = contract.filters.PoolRequest(event['poolName'], null);
 
     // events = await contract.queryFilter(filterName);
 
@@ -35,4 +35,19 @@ async function main(_poolname) {
     return
 }
 
-main("name");
+const emails = [
+    "a@b.bristol.ac.uk",
+    "b@c.bristol.ac.uk",
+    "c@d.bristol.ac.uk"
+]
+
+const event = {
+    "emails": {
+        0: "a@b.bristol.ac.uk",
+        1: "b@c.bristol.ac.uk",
+        2: "c@d.bristol.ac.uk",
+    },
+    "poolName":"name",
+}
+
+main(event);
