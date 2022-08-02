@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+const { ethers } = require("ethers");
 const poolFactoryABI = require("./PoolFactory.json");
 const {generatePasswords } = require("./generatePasswords");
 const {estimateGasCreatePool} = require("./estimateGas")
@@ -19,7 +19,7 @@ const {estimateGasCreatePool} = require("./estimateGas")
     uint _broadcastThreshold
 */
 
-exports.handler = async function(event) {
+exports.handler = async (event) => {
     const poolFactoryAddress = "0x4Cd7249632Df70A27324bd69725727a96Fc47729";
     const provider = new ethers.getDefaultProvider("kovan")
     const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
@@ -64,14 +64,14 @@ exports.handler = async function(event) {
                 verificationHashDigests,
                 event["broadcastThreshold"]
             )
-            return true
+            return {status: true}
         } else {
-            return false
+            return {status: false}
         }
 
     } catch(e) {
         console.log(e.reason)
-        return false
+        return {status: false,}
     }
 }
 

@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+const { ethers } = require("ethers");
 const poolFactoryABI = require("./PoolFactory.json");
 const {estimateGasCreatePool} = require("./estimateGas")
 
@@ -20,7 +20,7 @@ const event = {
 
 */
 
-exports.handler = async function(event) {
+exports.handler = async (event) => {
     const poolFactoryAddress = "0x4Cd7249632Df70A27324bd69725727a96Fc47729";
     const provider = new ethers.getDefaultProvider("kovan")
     const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
@@ -53,9 +53,10 @@ exports.handler = async function(event) {
             fakeBroadcastThreshold
         )
 
-        return gasEstimation * feeMultiplier
+        return {'gasCostEther': gasEstimation * feeMultiplier}
     } catch(e) {
         console.log(e.reason)
         return false
+
     }
 }
