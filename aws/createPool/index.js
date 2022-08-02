@@ -19,7 +19,7 @@ const {estimateGasCreatePool} = require("./estimateGas")
     uint _broadcastThreshold
 */
 
-async function main(event) {
+exports.handler = async function(event) {
     const poolFactoryAddress = "0x4Cd7249632Df70A27324bd69725727a96Fc47729";
     const provider = new ethers.getDefaultProvider("kovan")
     const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
@@ -78,7 +78,6 @@ async function main(event) {
 
 /*
 ============= Example Input =============
-*/
 
 const event = {
     "members": {
@@ -90,4 +89,4 @@ const event = {
     "broadcastThreshold": 2,
 }
 
-main(event);
+*/

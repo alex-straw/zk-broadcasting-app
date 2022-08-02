@@ -1,15 +1,9 @@
 const { ethers } = require("ethers");
 const crypto = require('crypto')
 
-/*
-
-This file takes as input a list of emails and pre-images (of suitable type for implementation with Zokrates) and generates hash digests.
-This is saved to ../Members.json - which is necessary for setting up the zk-SNARK verifier contract.
-
-*/
 
 function generatePreImage() {
-    // Will eventually be used to generate secure random preImages
+    // Used to generate secure random preImages
     return crypto.randomBytes(32).toString("hex");
 }
 
