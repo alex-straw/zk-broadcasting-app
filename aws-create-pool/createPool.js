@@ -34,25 +34,19 @@ async function main(event) {
             "idCount": pastEvent[0].args[2],
             "feePaid": pastEvent[0].args[3]
         };
-    } catch(e) {
-        console.log(e.reason)
-        return false
-    }
+
+        event["members"] = generatePasswords(event["members"])
+
+        emails = []
+        nMembers = Object.keys(event["members"]).length
+        verificationHashDigests = []
     
-    event["members"] = generatePasswords(event["members"])
-
-    emails = []
-    nMembers = Object.keys(event["members"]).length
-    verificationHashDigests = []
-
-    for (id in event["members"]) {
-        emails.push(event["members"][id].email)
-        verificationHashDigests.push([event["members"][id].hexHash[0], event["members"][id].hexHash[0]])
-    }
-
-    emails = Array.from(JSON.stringify(emails))
-
-    try {
+        for (id in event["members"]) {
+            emails.push(event["members"][id].email)
+            verificationHashDigests.push([event["members"][id].hexHash[0], event["members"][id].hexHash[0]])
+        }
+    
+        emails = Array.from(JSON.stringify(emails))
         const gasEstimation = await contract.estimateGas.createPool(
             event["poolName"],
             emails,
@@ -72,10 +66,11 @@ async function main(event) {
             )
             return true
         } else {
-            await signer.sendTransaction({
-                to: eventInfo["from"],
-                value: ethers.utils.parseEther(eventInfo["feePaid"]) // 1 ether
-              })
+            // Paying like this is dangerous - as it could allow multiple calls to drain the account - rethink
+            // await signer.sendTransaction({
+            //     to: eventInfo["from"],
+            //     value: ethers.utils.parseEther(eventInfo["feePaid"]) // 1 ether
+            //   })
             return false
         }
 
