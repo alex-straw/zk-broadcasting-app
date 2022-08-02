@@ -35,7 +35,8 @@ contract PoolFactory is Verifier {
 
     struct poolAddress {
         address poolAddress;
-        bool isAddress;
+        bool isPending;
+        bool isDeployed;
     }
 
     mapping(string => poolAddress) public poolAddresses;
@@ -50,8 +51,8 @@ contract PoolFactory is Verifier {
         uint256[2][] memory _verificationHashDigests,
         uint _broadcastThreshold
     ) public onlyOwner {
-        if (poolAddresses[_poolName].isAddress) revert();
-
+        require(!poolAddresses[_poolName].isDeployed, "Name is already in use (and deployed)");
+        require(poolAddresses[_poolName].isPending, "Name is not pending deployment (call paySetupFee first)");
         Pool pool = new Pool(
             _poolName,
             _emails,
@@ -61,7 +62,7 @@ contract PoolFactory is Verifier {
         );
 
         poolNames.push(_poolName);
-        poolAddresses[_poolName] = poolAddress(address(pool), true);
+        poolAddresses[_poolName] = poolAddress(address(pool), false, true);
         poolCount += 1;
         
         emit PoolCreated(_poolName, address(pool));
@@ -70,8 +71,11 @@ contract PoolFactory is Verifier {
     // -------  Pool Request ------- //
 
     function paySetupFee(string memory poolName, uint idCount) public payable {
-        require(!poolAddresses[poolName].isAddress, "Name is already in use");
+        require(!poolAddresses[poolName].isDeployed, "Name is already in use");
+        require(!poolAddresses[poolName].isPending, "Name is pending deployment");
         owner.transfer(msg.value);
+        // Reserve name
+        poolAddresses[poolName] = poolAddress(address(0), true, false);
         emit PoolRequest(poolName, msg.sender, idCount, msg.value);
     }
 
@@ -90,4 +94,5 @@ contract PoolFactory is Verifier {
     {
         return poolAddresses[_poolName].poolAddress;
     }
+
 }

@@ -1,0 +1,273 @@
+[
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "_poolName",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "_contractAddress",
+				"type": "address"
+			}
+		],
+		"name": "PoolCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "_poolName",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_idCount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_feePaid",
+				"type": "uint256"
+			}
+		],
+		"name": "PoolRequest",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_poolName",
+				"type": "string"
+			},
+			{
+				"internalType": "string[]",
+				"name": "_emails",
+				"type": "string[]"
+			},
+			{
+				"internalType": "uint256[2][]",
+				"name": "_verificationHashDigests",
+				"type": "uint256[2][]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_broadcastThreshold",
+				"type": "uint256"
+			}
+		],
+		"name": "createPool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_poolName",
+				"type": "string"
+			}
+		],
+		"name": "getPoolAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "poolName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "idCount",
+				"type": "uint256"
+			}
+		],
+		"name": "paySetupFee",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "poolAddresses",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "poolAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "isPending",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "isDeployed",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "poolCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "poolNames",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"components": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "X",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "Y",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Pairing.G1Point",
+						"name": "a",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256[2]",
+								"name": "X",
+								"type": "uint256[2]"
+							},
+							{
+								"internalType": "uint256[2]",
+								"name": "Y",
+								"type": "uint256[2]"
+							}
+						],
+						"internalType": "struct Pairing.G2Point",
+						"name": "b",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "X",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "Y",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Pairing.G1Point",
+						"name": "c",
+						"type": "tuple"
+					}
+				],
+				"internalType": "struct Verifier.Proof",
+				"name": "proof",
+				"type": "tuple"
+			},
+			{
+				"internalType": "uint256[2]",
+				"name": "input",
+				"type": "uint256[2]"
+			}
+		],
+		"name": "verifyTx",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "r",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

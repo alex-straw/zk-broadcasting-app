@@ -21,7 +21,7 @@ Each proof is different, and a hash of each (valid) submitted proof is stored to
 
 ## Current Prototype Deployment (Kovan)
 
-Pool Factory Address: ` 0xBb5Cc0f2a206BF42c1cbE6Bb32A1d2ED6352feDF `
+Pool Factory Address: ` 0x4Cd7249632Df70A27324bd69725727a96Fc47729 `
 
 # Deploy Your Own PoolFactory
 
