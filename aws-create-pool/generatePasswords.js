@@ -1,4 +1,3 @@
-const fs = require('fs')
 const { ethers } = require("ethers");
 const crypto = require('crypto')
 

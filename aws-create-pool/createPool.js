@@ -1,6 +1,7 @@
 const { ethers } = require("hardhat");
 const poolFactoryABI = require("./PoolFactory.json");
 const {generatePasswords } = require("./generatePasswords");
+const {estimateGasCreatePool} = require("./estimateGas")
 
 /*
     event PoolRequest(
@@ -38,7 +39,6 @@ async function main(event) {
         event["members"] = generatePasswords(event["members"])
 
         emails = []
-        nMembers = Object.keys(event["members"]).length
         verificationHashDigests = []
     
         for (id in event["members"]) {
@@ -46,16 +46,16 @@ async function main(event) {
             verificationHashDigests.push([event["members"][id].hexHash[0], event["members"][id].hexHash[0]])
         }
     
-        emails = Array.from(JSON.stringify(emails))
-        const gasEstimation = await contract.estimateGas.createPool(
+        // emails = Array.from(JSON.stringify(emails))
+
+        gasEstimation = estimateGasCreatePool(
+            provider,
+            contract,
             event["poolName"],
             emails,
             verificationHashDigests,
             event["broadcastThreshold"]
         )
-    
-        gasPrice = await provider.getGasPrice()
-        createPoolCost = gasPrice * gasEstimation
 
         if (eventInfo.feePaid > await createPoolCost*1.5) {
             await contract.createPool(
@@ -66,11 +66,6 @@ async function main(event) {
             )
             return true
         } else {
-            // Paying like this is dangerous - as it could allow multiple calls to drain the account - rethink
-            // await signer.sendTransaction({
-            //     to: eventInfo["from"],
-            //     value: ethers.utils.parseEther(eventInfo["feePaid"]) // 1 ether
-            //   })
             return false
         }
 
