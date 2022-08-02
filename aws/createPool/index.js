@@ -25,6 +25,11 @@ exports.handler = async (event) => {
     const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
     const contract = new ethers.Contract(poolFactoryAddress, poolFactoryABI, signer);
 
+
+    const AWS = require('aws-sdk');
+    AWS.config.region = 'eu-west-2';
+    const lambda = new AWS.Lambda();
+
     try {
         filterByName = contract.filters.PoolRequest(event["poolName"], null);
         let pastEvent = await contract.queryFilter(filterByName);
@@ -46,8 +51,6 @@ exports.handler = async (event) => {
             verificationHashDigests.push([event["members"][id].hexHash[0], event["members"][id].hexHash[0]])
         }
     
-        // emails = Array.from(JSON.stringify(emails))
-
         gasEstimation = estimateGasCreatePool(
             provider,
             contract,
@@ -56,37 +59,37 @@ exports.handler = async (event) => {
             verificationHashDigests,
             event["broadcastThreshold"]
         )
+        
+        console.log({"gasEstimation": await gasEstimation})
 
-        if (eventInfo.feePaid > await createPoolCost*1.5) {
+        if (eventInfo.feePaid > await gasEstimation*1.5) {
             await contract.createPool(
                 event["poolName"],
                 emails,
                 verificationHashDigests,
                 event["broadcastThreshold"]
             )
-            return {status: true}
-        } else {
-            return {status: false}
-        }
+        
+            for (id in event["members"]) {
+                const params = {
+                    FunctionName: 'sendEmail',
+                    InvocationType: 'RequestResponse',
+                    LogType: 'Tail',
+                    Payload: JSON.stringify({"recipient":event["members"][id].email, "preImage": JSON.stringify(event["members"][id].preImage)})
+                  };
 
+
+                lambda.invoke(params, (err) => {
+                    if (err) {
+                      console.log(err)
+                    } else {
+                      console.log('Sent');
+                    }
+                  })
+            };
+        }
     } catch(e) {
         console.log(e.reason)
         return {status: false,}
     }
 }
-
-
-/*
-============= Example Input =============
-
-const event = {
-    "members": {
-        0: {"email": "a@b.bristol.ac.uk"},
-        1: {"email": "a@b.bristol.ac.uk"},
-        2: {"email": "a@b.bristol.ac.uk"},
-    },
-    "poolName":"name234567",
-    "broadcastThreshold": 2,
-}
-
-*/
