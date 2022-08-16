@@ -12,7 +12,7 @@ contract Pool {
     uint256 public uploadCount = 0;
     string[] public emails;
     uint256 public verifiedIdCount = 0;
-    uint broadcastThreshold;
+    uint public broadcastThreshold;
     uint256 public idCount;
     string[] public ipfsCIDs;
     string poolName;
