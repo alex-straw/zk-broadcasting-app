@@ -95,4 +95,14 @@ contract PoolFactory is Verifier {
         return poolAddresses[_poolName].poolAddress;
     }
 
+    function poolNameInUse(string memory _poolName)
+        public
+        view
+        returns (bool)
+    {
+        if (poolAddresses[_poolName].isDeployed || poolAddresses[_poolName].isPending) {
+            return true;
+        }
+        return false;
+    }
 }
