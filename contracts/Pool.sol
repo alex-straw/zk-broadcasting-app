@@ -136,4 +136,10 @@ contract Pool {
             revert("Invalid proof");
         }
     }
+
+    /* Getters */
+
+    function getMemberHash(uint _memberNumber) public view returns(uint[2] memory) {
+        return members[_memberNumber].hashDigest;
+    }
 }
