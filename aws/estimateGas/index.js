@@ -21,16 +21,16 @@ const event = {
 */
 
 exports.handler = async (event) => {
-    const poolFactoryAddress = "0x4Cd7249632Df70A27324bd69725727a96Fc47729";
+    const poolFactoryAddress = "0xb48996e69c4E8e454bc1EcD050bA8475500cd96e";
     const provider = new ethers.getDefaultProvider("kovan")
-    const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
+    const signer = new ethers.Wallet(privateKey, provider)
     const contract = new ethers.Contract(poolFactoryAddress, poolFactoryABI, signer);
 
     try {
         const feeMultiplier = 2
         const fakePoolName = "pendingGasEstimator"
         const fakeEmail = "test@bristol.ac.uk"
-        const fakeBroadcastThreshold = event["idCount"]
+        const fakeBroadcastThreshold = parseInt(event["queryStringParameters"]["idCount"])
         const fakeHashDigest = [
             "0x00000000000000000000000000000000dded44937bd31c82e6c4d980b6a65171",
             "0x0000000000000000000000000000000030e5f72b782741da5f7213f1203dec49"
@@ -39,7 +39,7 @@ exports.handler = async (event) => {
         const fakeEmails = []
         const fakeVerificationHashDigests = []
 
-        for(let i = 0; i < event["idCount"]; i++) {
+        for(let i = 0; i < fakeBroadcastThreshold; i++) {
             fakeEmails.push(fakeEmail)
             fakeVerificationHashDigests.push(fakeHashDigest)
         }
@@ -53,10 +53,24 @@ exports.handler = async (event) => {
             fakeBroadcastThreshold
         )
 
-        return {'gasCostEther': gasEstimation * feeMultiplier}
-    } catch(e) {
-        console.log(e.reason)
-        return false
-
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Headers" : "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            },
+            body: JSON.stringify({'gasCostEther': gasEstimation * feeMultiplier}),
+        }
+     } catch(e) {
+        return {
+            statusCode: 400,
+            headers: {
+                "Access-Control-Allow-Headers" : "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            },
+            body: JSON.stringify(e.reason),
+        }
     }
 }

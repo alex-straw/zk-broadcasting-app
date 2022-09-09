@@ -1,7 +1,6 @@
 const { ethers } = require("ethers");
 const crypto = require('crypto')
 
-
 function generatePreImage() {
     // Used to generate secure random preImages
     return crypto.randomBytes(32).toString("hex");
@@ -73,18 +72,23 @@ function generateHashPassword() {
 }
 
 function generatePasswords(members) {
-    nMembers = Object.keys(members).length
+    const nMembers = Object.keys(members).length
 
     // Shuffle so index ordering cannot be linked back to users' emails
     passwordIds = shuffle(Array.from(Array(nMembers).keys()))
 
+    const passwordDict = {}
+
     for (id in passwordIds) {
         password = generateHashPassword();
-        members[id].preImage = password.preImage
-        members[id].hexHash = password.hexHash
-        members[id].decHash = password.decHash
+        passwordDict[id] = {
+            "email": members[id].email,
+            "preImage": password.preImage,
+            "hexHash": password.hexHash,
+            "decHash": password.decHash,
+        }
     }
-    return members
+    return passwordDict
 }
 
 module.exports = {
