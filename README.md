@@ -76,9 +76,3 @@ node zokratesPool/setupPasswords/setupPasswords.js
 ```
 node zokratesPool/setupPool/setupPool.js
 ```
-
-### To add:
-
-1. AWS Backend
-2. Automate deployment
-3. Build a website
