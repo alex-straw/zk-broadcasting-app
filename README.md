@@ -60,16 +60,6 @@ PRIVATE_KEY = "****************************************************************"
 npx hardhat run deploy/deploy.js
 ```
 
-# Demo (hardhat test)
-
-Ensure that you are in the root directory. This uses a fake set of 3 members. Each has a pre-generated proof for the server-set verification hash digest, and the 'random' client-side hash digest (new password).
-
-+ Run Hardhat Tests
-
-```
-npx hardhat test
-```
-
 ### Development (Misc)
 
 + Generate new random passwords (new proofs will need to be generated)
